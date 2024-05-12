@@ -1,0 +1,9 @@
+﻿{
+  "$schema": "https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json",
+  "settings": {
+    "documentationRules": {
+      "companyName": "HighCrit",
+      "copyrightText": "Copyright (c) {companyName}. This file is released under GPLv3.\nSee LICENSE for full license details."
+    }
+  }
+}
