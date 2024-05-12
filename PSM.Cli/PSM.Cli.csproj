@@ -22,4 +22,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\PSM.Common\PSM.Common.csproj" />
+  </ItemGroup>
+
 </Project>
