@@ -23,6 +23,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\cordis-to-cordis\Cordis2Cordis\Cordis2Cordis\Cordis2Cordis.csproj" />
+    <ProjectReference Include="..\cordis-to-cordis\Cordis2Cordis\CordisSchema\CordisSchema.csproj" />
     <ProjectReference Include="..\PSM.Common\PSM.Common.csproj" />
   </ItemGroup>
 

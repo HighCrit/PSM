@@ -17,6 +17,11 @@ public class State(string name)
     public string Name { get; private set; } = name;
 
     /// <summary>
+    /// Gets the type of the state.
+    /// </summary>
+    public StateType Type { get; private set; } = StateType.Normal;
+
+    /// <summary>
     /// Gets the list of transitions originating from this state.
     /// </summary>
     public List<Transition> Transitions { get; private set; } = [];
@@ -27,9 +32,9 @@ public class State(string name)
     /// <param name="target">The target state of the transition.</param>
     /// <param name="guard">The transition's guard.</param>
     /// <returns>The source state.</returns>
-    public State AddTransition(State target, string guard)
+    public State AddTransition(State target, string? guard)
     {
-        this.Transitions.Add(new Transition(this, target, guard));
+        this.Transitions.Add(new Transition(this, target, guard ?? "true"));
         return this;
     }
 }

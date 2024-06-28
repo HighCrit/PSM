@@ -17,7 +17,7 @@ public class StateMachine
     /// </summary>
     /// <param name="name">Name of state.</param>
     /// <returns>A state with the given name.</returns>
-    public State FindOrCreate(string name)
+    public State FindOrCreate(string name, StateType type = StateType.Normal)
     {
         if (this.States.TryGetValue(name, out State? state))
         {

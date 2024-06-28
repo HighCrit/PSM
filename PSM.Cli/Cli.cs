@@ -18,7 +18,7 @@ public class Cli
     /// <param name="args">Command line arguments.</param>
     public static void Main(string[] args)
     {
-        var parser = new UMLParser();
-        parser.Parse(@"C:\Users\dortm\Downloads\test.drawio");
+        var parser = new CordisParser();
+        var psms = parser.Parse(@"C:\Users\dortm\Desktop\01. Model\WashingMachine_C.xml");
     }
 }
