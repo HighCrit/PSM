@@ -1,0 +1,6 @@
+[submodule "cordis-to-mcrl2"]
+	path = cordis-to-mcrl2
+	url = https://gitlab.tue.nl/cordis-mcrl2/cordis-to-mcrl2.git
+[submodule "cordis-to-cordis"]
+	path = cordis-to-cordis
+	url = https://gitlab.tue.nl/cordis-mcrl2/cordis-to-cordis.git
