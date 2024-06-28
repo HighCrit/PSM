@@ -3,9 +3,9 @@
 // See LICENSE for full license details.
 // </copyright>
 
-namespace PSM.CLI;
-
 using PSM.CLI.Parser;
+
+namespace PSM.CLI;
 
 /// <summary>
 /// Class containing the entrypoint of program.

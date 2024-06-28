@@ -7,12 +7,13 @@ namespace PSM.CLI.Parser;
 
 using Cordis2Cordis.XML;
 using CordisSchema;
+using PSM.Common.Parser;
 using PSM.Common.UML;
 
 /// <summary>
 /// A parser to convert UML diagrams from XML to mcf-files.
 /// </summary>
-public class CordisParser
+public class CordisParser : IStateMachineParser
 {
     private const string PropertyPackageName = "Properties";
 
@@ -45,7 +46,7 @@ public class CordisParser
                 {
                     "Initial" => commonSm.FindOrCreate(s.Name, StateType.Initial),
                     "Final" => commonSm.FindOrCreate(s.Name, StateType.Final),
-                    _ => commonSm.FindOrCreate(s.Name)
+                    _ => commonSm.FindOrCreate(s.Name, s.Name.Contains("Invalid:") ? StateType.Invalid : StateType.Normal)
                 };
 
                 foreach (var t in s.Transitions)
