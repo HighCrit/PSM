@@ -1,8 +1,7 @@
-﻿using PSM.Common.UML;
-using PSM.Translators.MuCalc.Rgx;
-using System.Linq;
+﻿namespace PSM.Translators.MuCalc;
 
-namespace PSM.Translators.MuCalc;
+using PSM.Common.UML;
+using PSM.Translators.MuCalc.Rgx;
 
 public static class SMToREConverter
 {

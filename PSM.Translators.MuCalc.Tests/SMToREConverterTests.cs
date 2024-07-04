@@ -1,5 +1,6 @@
 using PSM.Common.MuCalc.RegularFormula.Operators;
 using PSM.Common.UML;
+using PSM.Translators.MuCalc.PROPEL;
 using PSM.Translators.MuCalc.Rgx;
 
 namespace PSM.Translators.MuCalc.Tests;
@@ -138,5 +139,11 @@ public class SMToREConverterTests
                 new Token("A")),
             new Rgx.Kleene(new Token("NOT A")));
         Assert.AreEqual(expectedRgx, rgx);
+    }
+
+    [TestMethod]
+    public void Test()
+    {
+        var test = Behaviour.Existence.AvailableOptions.GetFlags().ToList();
     }
 }
