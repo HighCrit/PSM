@@ -8,7 +8,9 @@ namespace PSM.Translators.MuCalc
     {
         public ModalFormulaBase Translate(StateMachine stateMachine)
         {
-            throw new NotImplementedException();
+            var rgx = SMToREConverter.ToRegEx(stateMachine).Flatten();
+
+            return null;
         }
     }
 }

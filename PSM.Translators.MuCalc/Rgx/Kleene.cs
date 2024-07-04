@@ -1,17 +1,54 @@
-﻿namespace PSM.Translators.MuCalc.Rgx
+﻿namespace PSM.Translators.MuCalc.Rgx;
+
+public class Kleene : RegexBase
 {
-    public class Kleene : RegexBase
+    private RegexBase Content { get; set; }
+
+    public Kleene(RegexBase regexBase)
     {
-        private RegexBase Content { get; set; }
+        this.Content = regexBase;  
+    }
 
-        public Kleene(RegexBase regexBase)
+    public override string ToString()
+    {
+        if (this.Content == Token.Epsilon)
         {
-            this.Content = regexBase;  
+            return Token.Epsilon.ToString();
         }
+        if (this.Content == Token.EmptySet)
+        {
+            return Token.EmptySet.ToString();
+        }
+        return $"{this.Content}*";
+    }
 
-        public override string ToString()
+    public override object Clone()
+    {
+        return new Kleene((RegexBase)this.Content.Clone());
+    }
+
+    public override RegexBase Flatten()
+    {
+        var flattened = this.Content.Flatten();
+        if (flattened == Token.Epsilon) return Token.Epsilon;
+        if (flattened == Token.EmptySet) return Token.EmptySet;
+        if (flattened is Optional opt) return new Kleene(opt.Content);
+
+        if (flattened is Disjunction or Concatenation) flattened = new Group(flattened);
+        return new Kleene(flattened);
+    }
+
+    public override bool Equals(RegexBase? other)
+    {
+        if (other is not null and Kleene kleene)
         {
-            return $"{this.Content}*";
+            return this.Content.Equals(kleene.Content);
         }
+        return false;
+    }
+
+    public override int GetHashCode()
+    {
+        return this.Content.GetHashCode();
     }
 }

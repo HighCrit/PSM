@@ -3,7 +3,7 @@
 // See LICENSE for full license details.
 // </copyright>
 
-namespace PSM.CLI.Parser;
+namespace PSM.Parsers.Cordis;
 
 using Cordis2Cordis.XML;
 using CordisSchema;
@@ -42,17 +42,19 @@ public class CordisParser : IStateMachineParser
 
             foreach (var s in sm.States.Items.OfType<CordisSchema.State>())
             {
-                Common.UML.State commonState = s.Name switch
+                Common.UML.State commonState = commonSm.FindOrCreate(s.Name);
+
+                commonState.Type = s.Name switch
                 {
-                    "Initial" => commonSm.FindOrCreate(s.Name, StateType.Initial),
-                    "Final" => commonSm.FindOrCreate(s.Name, StateType.Final),
-                    _ => commonSm.FindOrCreate(s.Name, s.Name.Contains("Invalid:") ? StateType.Invalid : StateType.Normal)
+                    "Initial" => StateType.Initial,
+                    "Final" => StateType.Final,
+                    _ when s.Name.Contains("Invalid:") => StateType.Invalid,
+                    _ => StateType.Normal,
                 };
 
-                foreach (var t in s.Transitions)
+                foreach (var t in s.Transitions ?? [])
                 {
-                    var target = commonSm.FindOrCreate(t.Target);
-                    commonState.AddTransition(target, t.Action);
+                    commonState.AddTransition(t.Target, t.Action is null ? null : new Guard(t.Action));
                 }
             }
 

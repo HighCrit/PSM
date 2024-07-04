@@ -21,9 +21,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CordisGrammar", "cordis-to-
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CordisSchema", "cordis-to-cordis\Cordis2Cordis\CordisSchema\CordisSchema.csproj", "{D3EA976D-7507-40BF-8B7F-22057628CA92}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PSM.Parsers.Cordis", "PSM.Parsers.Cordis\PSM.Parsers.Cordis.csproj", "{CFE6D9D1-BB20-4BBA-8758-AC3833DA6B95}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PSM.Parsers.Cordis", "PSM.Parsers.Cordis\PSM.Parsers.Cordis.csproj", "{CFE6D9D1-BB20-4BBA-8758-AC3833DA6B95}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PSM.Translators.MuCalc", "PSM.Translators.MuCalc\PSM.Translators.MuCalc.csproj", "{7C8426E4-BC7E-493C-B474-5EA86558E009}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PSM.Translators.MuCalc", "PSM.Translators.MuCalc\PSM.Translators.MuCalc.csproj", "{7C8426E4-BC7E-493C-B474-5EA86558E009}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PSM.Translators.MuCalc.Tests", "PSM.Translators.MuCalc.Tests\PSM.Translators.MuCalc.Tests.csproj", "{6C4C0094-DD3B-47D2-A26F-9174B608A033}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,6 +61,10 @@ Global
 		{7C8426E4-BC7E-493C-B474-5EA86558E009}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7C8426E4-BC7E-493C-B474-5EA86558E009}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7C8426E4-BC7E-493C-B474-5EA86558E009}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C4C0094-DD3B-47D2-A26F-9174B608A033}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C4C0094-DD3B-47D2-A26F-9174B608A033}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C4C0094-DD3B-47D2-A26F-9174B608A033}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C4C0094-DD3B-47D2-A26F-9174B608A033}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

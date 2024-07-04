@@ -3,9 +3,10 @@
 // See LICENSE for full license details.
 // </copyright>
 
-using PSM.CLI.Parser;
-
 namespace PSM.CLI;
+
+using PSM.Parsers.Cordis;
+using PSM.Translators.MuCalc;
 
 /// <summary>
 /// Class containing the entrypoint of program.
@@ -20,5 +21,11 @@ public class Cli
     {
         var parser = new CordisParser();
         var psms = parser.Parse(@"C:\Users\dortm\Desktop\01. Model\WashingMachine_C.xml");
+
+        var translator = new TranslateToMuCalc();
+        foreach (var (name, sm) in psms)
+        {
+            var res = translator.Translate(sm);
+        }
     }
 }

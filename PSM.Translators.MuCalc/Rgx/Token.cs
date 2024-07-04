@@ -1,17 +1,39 @@
-﻿namespace PSM.Translators.MuCalc.Rgx
+﻿namespace PSM.Translators.MuCalc.Rgx;
+
+public class Token(string token) : RegexBase
 {
-    public class Token : RegexBase
+    public static readonly Token EmptySet = new("Ø");
+    public static readonly Token All = new(".");
+    public static readonly Token Epsilon = new("ε");
+
+    private string Content { get; set; } = token;
+
+    public override string ToString()
     {
-        private string Content { get; set; }
+        return this.Content;
+    }
 
-        public Token(string token)
-        {
-            this.Content = token;
-        }
+    public override object Clone()
+    {
+        return new Token(this.Content);
+    }
 
-        public override string ToString()
+    public override RegexBase Flatten()
+    {
+        return this;
+    }
+
+    public override bool Equals(RegexBase? other)
+    {
+        if (other is not null and Token token)
         {
-            return this.Content;
+            return token.Content == this.Content;
         }
+        return false;
+    }
+
+    public override int GetHashCode()
+    {
+        return this.Content.GetHashCode();
     }
 }

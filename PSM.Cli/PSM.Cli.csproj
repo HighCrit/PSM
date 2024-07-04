@@ -27,6 +27,7 @@
     <ProjectReference Include="..\cordis-to-cordis\Cordis2Cordis\CordisSchema\CordisSchema.csproj" />
     <ProjectReference Include="..\PSM.Common\PSM.Common.csproj" />
     <ProjectReference Include="..\PSM.Parsers.Cordis\PSM.Parsers.Cordis.csproj" />
+    <ProjectReference Include="..\PSM.Translators.MuCalc\PSM.Translators.MuCalc.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,13 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace PSM.Translators.MuCalc.Rgx;
 
-namespace PSM.Translators.MuCalc.Rgx
+using PSM.Common.UML;
+
+public abstract class RegexBase : Label, ICloneable, IEquatable<RegexBase>
 {
-    public abstract class RegexBase
-    {
-        public abstract override string ToString();
-    }
+    public abstract RegexBase Flatten();
+
+    public abstract object Clone();
+
+    public override bool Equals(object? obj) => this.Equals(obj as RegexBase);
+
+    public abstract bool Equals(RegexBase? other);
+
+    public abstract override int GetHashCode();
 }
