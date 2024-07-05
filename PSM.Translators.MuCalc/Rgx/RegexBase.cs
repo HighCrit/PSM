@@ -4,7 +4,7 @@ using PSM.Common.UML;
 
 public abstract class RegexBase : Label, ICloneable, IEquatable<RegexBase>
 {
-    public override string ToString() => this.ToString(signature: false);
+    public override string ToString() => this.ToString(signature: true);
 
     public abstract string ToString(bool signature);
 

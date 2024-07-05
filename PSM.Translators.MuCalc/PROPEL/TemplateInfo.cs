@@ -25,7 +25,8 @@ public record TemplateInfo(Behaviour Behaviour, Scope Scope, Option Option)
                 Option.Finalisation |
                 Option.Repeatability,
             _ => throw new ArgumentException($"Invalid behaviour: {behaviour}.")
-        } | (scope is Scope.After_Q_Until_P or Scope.Between_Q_and_P ? Option.Scope_Repeatability : Option.None)
-        | (scope is Scope.After_Q ? Option.Last_Start : Option.None);
+        } | (scope is Scope.Between_Q_and_P ? Option.Scope_Repeatability : Option.None)
+        | (scope is Scope.After_Q or Scope.Between_Q_and_P ? Option.Last_Start : Option.None)
+        | (scope is Scope.Before_P or Scope.Between_Q_and_P ? Option.Missing_End : Option.None);
     }
 }

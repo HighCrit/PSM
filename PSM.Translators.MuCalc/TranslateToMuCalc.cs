@@ -8,13 +8,13 @@ namespace PSM.Translators.MuCalc
     public class TranslateToMuCalc : ITranslator<StateMachine, (TemplateInfo Info, ModalFormulaBase Formula)>
     {
         private TemplatePatternGenerator templatePatternGenerator;
-        private Dictionary<string, TemplateInfo> TemplateSignatures;
+        private List<(string Signature, TemplateInfo Info)> TemplateSignatures;
 
         public TranslateToMuCalc()
         {
             this.templatePatternGenerator = new TemplatePatternGenerator();
             var test = this.templatePatternGenerator.TemplateSignatures.ToList();
-            this.TemplateSignatures = this.templatePatternGenerator.TemplateSignatures.ToDictionary();
+            this.TemplateSignatures = this.templatePatternGenerator.TemplateSignatures.ToList();
         }
 
         public (TemplateInfo Info, ModalFormulaBase Formula) Translate(StateMachine stateMachine)
@@ -22,12 +22,13 @@ namespace PSM.Translators.MuCalc
             var rgx = SMToREConverter.ToRegEx(stateMachine).Flatten();
             var signature = rgx.ToString(true);
 
-            if (!this.TemplateSignatures.TryGetValue(signature, out var propertyInfo))
+            var matchedTemplates = this.TemplateSignatures.Where(t => t.Signature == signature).ToList();
+            if (matchedTemplates.Count == 0)
             {
                 throw new ArgumentException($"Provided state-machine does not yield known signature, got: '{signature}'.");
             }
 
-            return (propertyInfo, null);
+            return (matchedTemplates[0].Info, null);
         }
     }
 }

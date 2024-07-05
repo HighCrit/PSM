@@ -37,8 +37,7 @@ public class Disjunction : RegexBase
     {
         var flattenedLeft = this.Left.Flatten();
         var flattenedRight = this.Right.Flatten();
-        if (flattenedLeft == Token.Epsilon && flattenedRight == Token.Epsilon) return Token.Epsilon;
-        if (flattenedLeft == Token.EmptySet && flattenedRight == Token.EmptySet) return Token.EmptySet;
+        if (flattenedLeft.Equals(flattenedRight)) return flattenedLeft;
         if (flattenedLeft == Token.EmptySet) return flattenedRight;
         if (flattenedRight == Token.EmptySet) return flattenedLeft;
         if (flattenedLeft == Token.Epsilon) return new Optional(flattenedRight).Flatten();

@@ -54,4 +54,9 @@ public enum Option
     /// Whether the property must hold for the last start or not.
     /// </summary>
     Last_Start = 512,
+
+    /// <summary>
+    /// Whether it is allowed for the END action to not occur.
+    /// </summary>
+    Missing_End = 1024,
 }
