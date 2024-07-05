@@ -3,9 +3,9 @@
     [Flags]
     public enum StateType
     {
-        Normal = 0,
-        Initial = 1,
-        Invalid = 2,
-        Final = 4,
+        Normal = 1,
+        Initial = 2,
+        Invalid = 4,
+        Final = 8,
     }
 }

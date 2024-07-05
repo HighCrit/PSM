@@ -8,9 +8,16 @@ namespace PSM.Common.UML;
 /// <summary>
 /// The class representing the state-machine from the diagram.
 /// </summary>
-public class StateMachine(IDictionary<string, State>? states = null) : ICloneable
+public class StateMachine : ICloneable
 {
-    public IDictionary<string, State> States { get; private set; } = states ?? new Dictionary<string, State>();
+    public StateMachine(IEnumerable<State>? states = null)
+    {
+        this.States = states
+            ?.Select(s => new KeyValuePair<string, State>(s.Name, s)).ToDictionary()
+            ?? [];
+    }
+
+    public IDictionary<string, State> States { get; private set; }
 
     /// <summary>
     /// Finds or creates a state with the given name.
@@ -39,6 +46,6 @@ public class StateMachine(IDictionary<string, State>? states = null) : ICloneabl
 
     public object Clone()
     {
-        return new StateMachine(this.States.Select(kvp => (kvp.Key, (State)kvp.Value.Clone())).ToDictionary());
+        return new StateMachine(this.States.Select(kvp => (State)kvp.Value.Clone()));
     }
 }

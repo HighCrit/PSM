@@ -11,17 +11,17 @@ public class Concatenation : RegexBase
         this.Right = right;
     }
 
-    public override string ToString()
+    public override string ToString(bool signature)
     {
         if (this.Left == Token.Epsilon)
         {
-            return this.Right.ToString();
-        }
+            return this.Right.ToString(signature);
+        }   
         if (this.Right == Token.Epsilon)
         {
-            return this.Left.ToString();
+            return this.Left.ToString(signature);
         }
-        return $"{this.Left}{this.Right}";
+        return $"{this.Left.ToString(signature)}{this.Right.ToString(signature)}";
     }
 
     public override object Clone()

@@ -52,9 +52,14 @@ public class CordisParser : IStateMachineParser
                     _ => StateType.Normal,
                 };
 
+                if (commonState.Type.HasFlag(StateType.Final))
+                {
+                    commonState.AddTransition(commonState);
+                }
+
                 foreach (var t in s.Transitions ?? [])
                 {
-                    commonState.AddTransition(t.Target, t.Action is null ? null : new Guard(t.Action));
+                    commonState.AddTransition(t.Target, t.Guard is null ? null : new Guard(t.Guard));
                 }
             }
 

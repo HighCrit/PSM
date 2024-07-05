@@ -44,4 +44,22 @@ public class EnumExtensionsTest
 
         CollectionAssert.AreEqual(expected, combinations);
     }
+
+    [TestMethod]
+    public void TestGetCombinations2()
+    {
+        var flag = TemplateInfo.GetAvailableOptionsFor(Behaviour.Existence, Scope.After_Q);
+        var flags = flag.GetFlags().ToList();
+        var combinations = flags.GetAllCombinations().ToList();
+
+        var expected = new List<Option>
+        {
+            Option.None,
+            Option.Bounded,
+            Option.Last_Start,
+            Option.Bounded | Option.Last_Start,
+        };
+
+        CollectionAssert.AreEqual(expected, combinations);
+    }
 }

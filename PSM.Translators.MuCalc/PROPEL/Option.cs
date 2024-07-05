@@ -44,4 +44,14 @@ public enum Option
     /// Whether after actions A and B occured, if the property should hold again for the next occurence of A.
     /// </summary>
     Repeatability = 128,
+
+    /// <summary>
+    /// Whether the next occurence of the scope should also hold.
+    /// </summary>
+    Scope_Repeatability = 256,
+
+    /// <summary>
+    /// Whether the property must hold for the last start or not.
+    /// </summary>
+    Last_Start = 512,
 }

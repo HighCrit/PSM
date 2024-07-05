@@ -33,14 +33,14 @@ public class State(string name, StateType type = StateType.Normal) : ICloneable
     /// <param name="target">The target state of the transition.</param>
     /// <param name="guard">The transition's guard.</param>
     /// <returns>The current state.</returns>
-    public State AddTransition(string target, Label? label)
+    public State AddTransition(string target, Label? label = null)
     {
         this.Transitions.Add(new Transition(this.Name, target, label));
         return this;
     }
 
     /// <inheritdoc cref="AddTransition(string, Label?)"/>
-    public State AddTransition(State target, Label? label)
+    public State AddTransition(State target, Label? label = null)
     {
         this.Transitions.Add(new Transition(this.Name, target.Name, label));
         return this;

@@ -9,9 +9,9 @@ internal class Group : RegexBase
         this.Content = content;
     }
 
-    public override string ToString()
+    public override string ToString(bool signature)
     {
-        return $"({this.Content})";
+        return $"({this.Content.ToString(signature)})";
     }
 
     public override object Clone()

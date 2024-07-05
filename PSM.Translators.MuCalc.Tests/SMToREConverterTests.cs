@@ -14,12 +14,9 @@ public class SMToREConverterTests
         var initial = new State("Initial", StateType.Initial);
         var sink = new State("Sink", StateType.Invalid);
         var interMediate = new State("Intermediate", StateType.Normal);
-        var sm = new StateMachine(new Dictionary<string, State>
-        {
-            { initial.Name, initial },
-            { sink.Name, sink },
-            { interMediate.Name, interMediate },
-        });
+        var sm = new StateMachine([
+            initial, sink, interMediate,
+            ]);
 
         initial.AddTransition(interMediate, null);
         interMediate.AddTransition(interMediate, new Guard("NOT A"));
@@ -38,12 +35,7 @@ public class SMToREConverterTests
         var initial = new State("Initial", StateType.Initial);
         var final = new State("Final", StateType.Final);
         var interMediate = new State("Intermediate", StateType.Invalid);
-        var sm = new StateMachine(new Dictionary<string, State>
-        {
-            { initial.Name, initial },
-            { final.Name, final },
-            { interMediate.Name, interMediate },
-        });
+        var sm = new StateMachine([initial, final, interMediate]);
 
         initial.AddTransition(interMediate, null);
         interMediate.AddTransition(interMediate, new Guard("NOT A"));
@@ -62,12 +54,7 @@ public class SMToREConverterTests
         var initial = new State("Initial", StateType.Initial);
         var final = new State("Final", StateType.Normal);
         var interMediate = new State("Intermediate", StateType.Invalid);
-        var sm = new StateMachine(new Dictionary<string, State>
-        {
-            { initial.Name, initial },
-            { final.Name, final },
-            { interMediate.Name, interMediate },
-        });
+        var sm = new StateMachine([initial, final, interMediate]);
 
         initial.AddTransition(interMediate, null);
         interMediate.AddTransition(interMediate, new Guard("NOT A"));
@@ -96,15 +83,9 @@ public class SMToREConverterTests
         var state4 = new State("State4", StateType.Normal);
         var final = new State("Final", StateType.Final); // Choice to include
 
-        var sm = new StateMachine(new Dictionary<string, State>
-        {
-            { initial.Name, initial },
-            { state1.Name, state1 },
-            { state2.Name, state2 },
-            { state3.Name, state3 },
-            { state4.Name, state4 },
-            { final.Name, final },
-        });
+        var sm = new StateMachine([
+            initial, state1, state2, state3, state4, final,
+            ]);
 
         initial.AddTransition(state1, null);
 
@@ -139,11 +120,5 @@ public class SMToREConverterTests
                 new Token("A")),
             new Rgx.Kleene(new Token("NOT A")));
         Assert.AreEqual(expectedRgx, rgx);
-    }
-
-    [TestMethod]
-    public void Test()
-    {
-        var test = Behaviour.Existence.AvailableOptions.GetFlags().ToList();
     }
 }

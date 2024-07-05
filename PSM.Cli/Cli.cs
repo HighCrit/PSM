@@ -20,7 +20,7 @@ public class Cli
     public static void Main(string[] args)
     {
         var parser = new CordisParser();
-        var psms = parser.Parse(@"C:\Users\dortm\Desktop\01. Model\WashingMachine_C.xml");
+        var psms = parser.Parse(@"C:\Users\dandor\Desktop\WashingMachine_C.xml");
 
         var translator = new TranslateToMuCalc();
         foreach (var (name, sm) in psms)

@@ -11,21 +11,21 @@ public class Disjunction : RegexBase
         this.Right = right;
     }
 
-    public override string ToString()
+    public override string ToString(bool signature)
     {
         if (this.Left == Token.Epsilon && this.Right == Token.Epsilon)
         {
-            return Token.Epsilon.ToString();
+            return Token.Epsilon.ToString(signature);
         }
         if (this.Left == Token.Epsilon)
         {
-            return $"{this.Right}?";
+            return $"{this.Right.ToString(signature)}?";
         }
         if (this.Right == Token.Epsilon)
         {
-            return $"{this.Left}?";
+            return $"{this.Left.ToString(signature)}?";
         }
-        return $"{this.Left}|{this.Right}";
+        return $"{this.Left.ToString(signature)}|{this.Right.ToString(signature)}";
     }
 
     public override object Clone()

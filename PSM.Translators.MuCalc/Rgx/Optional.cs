@@ -25,11 +25,11 @@ public class Optional : RegexBase
         return new Optional(flattened);
     }
 
-    public override string ToString()
+    public override string ToString(bool signature)
     {
-        if (this.Content == Token.Epsilon) return Token.Epsilon.ToString();
-        if (this.Content == Token.EmptySet) return Token.EmptySet.ToString();
-        return $"{this.Content}?";
+        if (this.Content == Token.Epsilon) return Token.Epsilon.ToString(signature);
+        if (this.Content == Token.EmptySet) return Token.EmptySet.ToString(signature);
+        return $"{this.Content.ToString(signature)}?";
     }
 
     public override bool Equals(RegexBase? other)
@@ -45,4 +45,5 @@ public class Optional : RegexBase
     {
         return this.Content.GetHashCode();
     }
+
 }

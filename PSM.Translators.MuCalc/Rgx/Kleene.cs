@@ -9,17 +9,17 @@ public class Kleene : RegexBase
         this.Content = regexBase;  
     }
 
-    public override string ToString()
+    public override string ToString(bool signature)
     {
         if (this.Content == Token.Epsilon)
         {
-            return Token.Epsilon.ToString();
+            return Token.Epsilon.ToString(signature);
         }
         if (this.Content == Token.EmptySet)
         {
-            return Token.EmptySet.ToString();
+            return Token.EmptySet.ToString(signature);
         }
-        return $"{this.Content}*";
+        return $"{this.Content.ToString(signature)}*";
     }
 
     public override object Clone()

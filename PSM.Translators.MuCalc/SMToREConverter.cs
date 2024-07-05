@@ -18,7 +18,7 @@ public static class SMToREConverter
         copySm.MakeFullConnected();
 
         var queue = new Queue<string>();
-        var initial = copySm.States.Values.Single(s => (s.Type & StateType.Initial) is StateType.Initial);
+        var initial = copySm.States.Values.Single(s => s.Type.HasFlag(StateType.Initial));
         var visited = new HashSet<string>();
         var initialSucc = initial.Transitions.Select(t => t.Target).Distinct().ToList();
         initialSucc.ForEach(s =>
@@ -33,8 +33,7 @@ public static class SMToREConverter
             var succs = copySm.FindOrCreate(s).Transitions
                 .Select(t => copySm.FindOrCreate(t.Target))
                 .Where(state => 
-                    (state.Type & StateType.Final) is not StateType.Final && 
-                    (state.Type & StateType.Initial) is not StateType.Initial &&
+                    !state.Type.HasFlag(StateType.Initial) &&
                     !visited.Contains(state.Name))
                 .Select(state => state.Name)
                 .Distinct()
@@ -49,12 +48,12 @@ public static class SMToREConverter
 
     private static void MakeFullConnected(this StateMachine sm)
     {
-        var nonFinalStates = sm.States.Values.Where(s => (s.Type & StateType.Final) is not StateType.Final).ToList();
+        var nonFinalStates = sm.States.Values.Where(s => !s.Type.HasFlag(StateType.Final)).ToList();
 
         foreach (var s1 in nonFinalStates) foreach (var s2 in nonFinalStates)
         {
             // A transition already exists
-            if (s1.Transitions.Any(t => t.Target.Equals(s2)) || (s2.Type & StateType.Initial) is StateType.Initial) continue;
+            if (s1.Transitions.Any(t => t.Target.Equals(s2)) || s2.Type.HasFlag(StateType.Initial)) continue;
             // Add self-loop
             if (s1.Equals(s2)) s1.AddTransition(s1.Name, Token.Epsilon);
             // Add non-accepting transition otherwise.
@@ -65,12 +64,14 @@ public static class SMToREConverter
     private static void UnifyAcceptingStates(this StateMachine sm)
     {
         // In PSM accepting states are non-initial, non-invalid states.
-        var accepting = sm.States.Values.Where(s => s.Type is StateType.Normal or StateType.Final);
+        var accepting = sm.States.Values.Where(s => s.Type.HasFlag(StateType.Normal) || s.Type.HasFlag(StateType.Final)).Select(s => s.Name);
 
         var unifiedAcceptingState = sm.FindOrCreate(Guid.NewGuid().ToString());
 
-        foreach (var s in accepting)
+        foreach (var name in accepting)
         {
+            var s = sm.FindOrCreate(name);
+
             if (s.Transitions.Any(t => t.Target.Equals(unifiedAcceptingState))) continue;
             s.AddTransition(unifiedAcceptingState.Name, Token.Epsilon);
             s.Type = StateType.Invalid;
@@ -140,6 +141,6 @@ public static class SMToREConverter
             return reb;
         }
 
-        return new Token(label.ToString()!);
+        return label.ToString()!.Equals("true") ? Token.All : new Token(label.ToString()!);
     }
 }

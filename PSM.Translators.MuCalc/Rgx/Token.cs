@@ -8,9 +8,13 @@ public class Token(string token) : RegexBase
 
     private string Content { get; set; } = token;
 
-    public override string ToString()
+    public override string ToString(bool signature)
     {
-        return this.Content;
+        return signature && !(
+            this.Equals(Token.Epsilon) ||
+            this.Equals(Token.EmptySet) ||
+            this.Equals(Token.All)) 
+            ? "T" : this.Content;
     }
 
     public override object Clone()

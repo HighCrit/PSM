@@ -2,8 +2,8 @@
 
 namespace PSM.Common.Translator
 {
-    public interface ITranslator<T>
+    public interface ITranslator<TIn, TOut>
     {
-        public T Translate(StateMachine stateMachine);
+        public TOut Translate(TIn @in);
     }
 }
