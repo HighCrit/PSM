@@ -1,6 +1,6 @@
-﻿using static System.Runtime.InteropServices.JavaScript.JSType;
+﻿using PSM.Common.PROPEL;
 
-namespace PSM.Translators.MuCalc;
+namespace PSM.Translators.PROPEL;
 
 public static class EnumExtensions
 {
@@ -13,12 +13,17 @@ public static class EnumExtensions
     public static IEnumerable<T> GetAllCombinations<T>(this IEnumerable<T> input) where T : Enum
     {
         var zero = (T)Convert.ChangeType(0, Enum.GetUnderlyingType(typeof(T)));
-        T[] values = input.ToArray();
+        var values = input.ToArray();
 
         return Enumerable
             .Range(0, 1 << (values.Length))
             .Select(index => values
                .Where((v, i) => (index & (1 << i)) != 0))
                 .Select(a => a.Aggregate(zero, (acc, @new) => (T)(object)((int)(object)acc | (int)(object)@new)));
+    }
+
+    public static bool IsSubsetOf(this Option sub, Option super)
+    {
+        return (sub & ~super) == 0;
     }
 }

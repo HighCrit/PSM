@@ -8,7 +8,7 @@ namespace PSM.Common.MuCalc.ModalFormula;
 /// <summary>
 /// The least fixed point.
 /// </summary>
-public class MuFixPoint : ModalFormulaBase
+public class MuFixPoint : IModalFormula
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="MuFixPoint"/> class.
@@ -16,7 +16,7 @@ public class MuFixPoint : ModalFormulaBase
     /// <param name="id">The fixpoint's id.</param>
     /// <param name="formula">The sub-formulas.</param>
     /// <param name="parameters">The fixpoint's parameters.</param>
-    public MuFixPoint(string id, ModalFormulaBase formula, IEnumerable<Parameter>? parameters = null)
+    public MuFixPoint(string id, IModalFormula formula, IEnumerable<Parameter>? parameters = null)
     {
         this.Id = id;
         this.Formula = formula;
@@ -25,7 +25,7 @@ public class MuFixPoint : ModalFormulaBase
 
     private string Id { get; set; }
 
-    private ModalFormulaBase Formula { get; set; }
+    private IModalFormula Formula { get; set; }
 
     private IEnumerable<Parameter>? Parameters { get; set; }
 

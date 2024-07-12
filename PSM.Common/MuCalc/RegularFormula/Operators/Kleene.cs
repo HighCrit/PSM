@@ -9,11 +9,10 @@ namespace PSM.Common.MuCalc.RegularFormula.Operators;
 /// The Kleene star operator for regular formulas.
 /// </summary>
 /// <param name="formula">The regular formula.</param>
-public class Kleene(RegularFormulaBase formula) : RegularFormulaBase
+public class Kleene(IRegularFormula formula) : IRegularFormula
 {
-    private RegularFormulaBase Formula { get; set; } = formula;
+    private IRegularFormula Formula { get; set; } = formula;
 
-    /// <inheritdoc/>
     public override string ToString()
     {
         return $"{this.Formula}*";

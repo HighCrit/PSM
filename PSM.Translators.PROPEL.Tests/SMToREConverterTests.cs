@@ -1,9 +1,8 @@
-using PSM.Common.MuCalc.RegularFormula.Operators;
 using PSM.Common.UML;
-using PSM.Translators.MuCalc.PROPEL;
+using PSM.Translators.MuCalc;
 using PSM.Translators.MuCalc.Rgx;
 
-namespace PSM.Translators.MuCalc.Tests;
+namespace PSM.Translators.PROPEL.Tests;
 
 [TestClass]
 public class SMToREConverterTests
@@ -25,7 +24,7 @@ public class SMToREConverterTests
         var rgx = sm.ToRegEx().Flatten();
 
         // (NOT A)*
-        var expectedRgx = new Rgx.Kleene(new Token("NOT A"));
+        var expectedRgx = new MuCalc.Rgx.Kleene(new Token("NOT A"));
         Assert.AreEqual(expectedRgx, rgx);
     }
 
@@ -44,7 +43,7 @@ public class SMToREConverterTests
         var rgx = sm.ToRegEx().Flatten();
 
         // (NOT A)* A
-        var expectedRgx = new Rgx.Concatenation(new Rgx.Kleene(new Token("NOT A")), new Token("A"));
+        var expectedRgx = new MuCalc.Rgx.Concatenation(new MuCalc.Rgx.Kleene(new Token("NOT A")), new Token("A"));
         Assert.AreEqual(expectedRgx, rgx);
     }
 
@@ -64,12 +63,12 @@ public class SMToREConverterTests
         var rgx = sm.ToRegEx().Flatten();
 
         // (NOT A)* A (NOT A)*
-        var expectedRgx = new Rgx.Concatenation(
-            new Rgx.Concatenation(
-                new Rgx.Kleene(
+        var expectedRgx = new MuCalc.Rgx.Concatenation(
+            new MuCalc.Rgx.Concatenation(
+                new MuCalc.Rgx.Kleene(
                     new Token("NOT A")),
                 new Token("A")), 
-            new Rgx.Kleene(new Token("NOT A")));
+            new MuCalc.Rgx.Kleene(new Token("NOT A")));
         Assert.AreEqual(expectedRgx, rgx);
     }
 
@@ -113,12 +112,12 @@ public class SMToREConverterTests
         var rgx = sm.ToRegEx().Flatten();
 
         // (NOT A)* A (NOT A)*
-        var expectedRgx = new Rgx.Concatenation(
-            new Rgx.Concatenation(
-                new Rgx.Kleene(
+        var expectedRgx = new MuCalc.Rgx.Concatenation(
+            new MuCalc.Rgx.Concatenation(
+                new MuCalc.Rgx.Kleene(
                     new Token("NOT A")),
                 new Token("A")),
-            new Rgx.Kleene(new Token("NOT A")));
+            new MuCalc.Rgx.Kleene(new Token("NOT A")));
         Assert.AreEqual(expectedRgx, rgx);
     }
 }

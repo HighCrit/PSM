@@ -1,7 +1,8 @@
 ﻿using PSM.Common.UML;
-using PSM.Translators.MuCalc.PROPEL;
 using PSM.Translators.MuCalc.Rgx;
 using System.Diagnostics;
+using PSM.Common.PROPEL;
+using PSM.Translators.PROPEL;
 
 namespace PSM.Translators.MuCalc;
 
@@ -9,10 +10,10 @@ public class TemplatePatternGenerator
 {
     private static readonly Guard GenericGuard = new("T");
 
-    private List<(TemplateInfo Info, RegexBase? Rgx)> templatePatterns = [];
-    private List<(string Signature, TemplateInfo Info)> templateSignatures = [];
+    private List<(PropertyInfo Info, RegexBase? Rgx)> templatePatterns = [];
+    private List<(string Signature, PropertyInfo Info)> templateSignatures = [];
 
-    public IEnumerable<(TemplateInfo Info, RegexBase? Rgx)> TemplatePatterns
+    public IEnumerable<(PropertyInfo Info, RegexBase? Rgx)> TemplatePatterns
     {
         get
         {
@@ -24,7 +25,7 @@ public class TemplatePatternGenerator
         }
     }
 
-    public IEnumerable<(string Signature, TemplateInfo Info)> TemplateSignatures
+    public IEnumerable<(string Signature, PropertyInfo Info)> TemplateSignatures
     {
         get
         {
@@ -44,31 +45,31 @@ public class TemplatePatternGenerator
         }
     }
 
-    public IEnumerable<(TemplateInfo Info, RegexBase? Rgx)> GenerateAllPatterns()
+    public IEnumerable<(PropertyInfo Info, RegexBase? Rgx)> GenerateAllPatterns()
     {
-        var result = new List<(TemplateInfo Info, RegexBase? Rgx)>();
+        var result = new List<(PropertyInfo Info, RegexBase? Rgx)>();
         foreach (var behaviour in Enum.GetValues<Behaviour>()) foreach (var scope in Enum.GetValues<Scope>())
+        {
+            var options = PropertyInfo
+                .GetAvailableOptionsFor(behaviour, scope)
+                .GetFlags()
+                .GetAllCombinations().ToList();
+
+            foreach (var option in options)
             {
-                var options = TemplateInfo
-                    .GetAvailableOptionsFor(behaviour, scope)
-                    .GetFlags()
-                    .GetAllCombinations().ToList();
-
-                foreach (var option in options)
+                var pattern = (behaviour, scope) switch
                 {
-                    var pattern = (behaviour, scope) switch
-                    {
-                        (Behaviour.Absence, Scope.Global) => this.GenerateGlobalAbsencePattern(option),
-                        (Behaviour.Existence, Scope.Global) => this.GenerateGlobalExistencePattern(option),
-                        (Behaviour.Existence, Scope.After_Q) => this.GenerateAfterExistencePattern(option),
-                        (Behaviour.Existence, Scope.Before_P) => this.GenerateBeforeExistencePattern(option),
-                        (Behaviour.Existence, Scope.Between_Q_and_P) => this.GenerateBetweenExistencePattern(option),
-                        _ => default,
-                    };
+                    (Behaviour.Absence, Scope.Global) => this.GenerateGlobalAbsencePattern(option),
+                    (Behaviour.Existence, Scope.Global) => this.GenerateGlobalExistencePattern(option),
+                    (Behaviour.Existence, Scope.After_Q) => this.GenerateAfterExistencePattern(option),
+                    (Behaviour.Existence, Scope.Before_P) => this.GenerateBeforeExistencePattern(option),
+                    (Behaviour.Existence, Scope.Between_Q_and_P) => this.GenerateBetweenExistencePattern(option),
+                    _ => default,
+                };
 
-                    result.Add((new(behaviour, scope, option), pattern));
-                }
+                result.Add((new(behaviour, scope, option), pattern));
             }
+        }
 
         return result;
     }
@@ -110,7 +111,7 @@ public class TemplatePatternGenerator
     public RegexBase GenerateAfterExistencePattern(Option option)
     {
         var isBounded = option.HasFlag(Option.Bounded);
-        var lastStart = option.HasFlag(Option.Last_Start);
+        var lastStart = option.HasFlag(Option.LastStart);
 
         var initial = new State("Initial", StateType.Initial);
         var state1 = new State("State 1", StateType.Normal);
@@ -143,7 +144,7 @@ public class TemplatePatternGenerator
     public RegexBase GenerateBeforeExistencePattern(Option option)
     {
         var isBounded = option.HasFlag(Option.Bounded);
-        var missingEnd = option.HasFlag(Option.Missing_End);
+        var missingEnd = option.HasFlag(Option.MissingEnd);
 
         var initial = new State("Initial", StateType.Initial);
         // If the end may be missing, then the initial state is not an accepting state since A has to occur.
@@ -171,9 +172,9 @@ public class TemplatePatternGenerator
     public RegexBase GenerateBetweenExistencePattern(Option option)
     {
         var isBounded = option.HasFlag(Option.Bounded);
-        var lastStart = option.HasFlag(Option.Last_Start);
-        var missingEnd = option.HasFlag(Option.Missing_End);
-        var scopeRepeatable = option.HasFlag(Option.Scope_Repeatability);
+        var lastStart = option.HasFlag(Option.LastStart);
+        var missingEnd = option.HasFlag(Option.MissingEnd);
+        var scopeRepeatable = option.HasFlag(Option.ScopeRepeatability);
 
         var initial = new State("Initial", StateType.Initial);
         var state1 = new State("State1", StateType.Normal);

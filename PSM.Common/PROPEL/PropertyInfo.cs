@@ -1,6 +1,6 @@
-﻿namespace PSM.Translators.MuCalc.PROPEL;
+﻿namespace PSM.Common.PROPEL;
 
-public record TemplateInfo(Behaviour Behaviour, Scope Scope, Option Option)
+public record PropertyInfo(Behaviour Behaviour, Scope Scope, Option Option)
 {
     public static Option GetAvailableOptionsFor(Behaviour behaviour, Scope scope)
     {
@@ -11,22 +11,22 @@ public record TemplateInfo(Behaviour Behaviour, Scope Scope, Option Option)
                 Option.Bounded,
             Behaviour.Precedence => 
                 Option.Nullity |
-                Option.Pre_arity |
+                Option.PreArity |
                 Option.Immediacy |
-                Option.Post_arity |
+                Option.PostArity |
                 Option.Finalisation |
                 Option.Repeatability,
             Behaviour.Response => 
                 Option.Nullity |
                 Option.Precedency |
-                Option.Pre_arity |
+                Option.PreArity |
                 Option.Immediacy |
-                Option.Post_arity |
+                Option.PostArity |
                 Option.Finalisation |
                 Option.Repeatability,
             _ => throw new ArgumentException($"Invalid behaviour: {behaviour}.")
-        } | (scope is Scope.Between_Q_and_P ? Option.Scope_Repeatability : Option.None)
-        | (scope is Scope.After_Q or Scope.Between_Q_and_P ? Option.Last_Start : Option.None)
-        | (scope is Scope.Before_P or Scope.Between_Q_and_P ? Option.Missing_End : Option.None);
+        } | (scope is Scope.Between_Q_and_P ? Option.ScopeRepeatability : Option.None)
+        | (scope is Scope.After_Q or Scope.Between_Q_and_P ? Option.LastStart : Option.None)
+        | (scope is Scope.Before_P or Scope.Between_Q_and_P ? Option.MissingEnd : Option.None);
     }
 }

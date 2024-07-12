@@ -1,6 +1,7 @@
-﻿using PSM.Translators.MuCalc.PROPEL;
+﻿using PSM.Common.PROPEL;
+using PSM.Translators.PROPEL;
 
-namespace PSM.Translators.MuCalc.Tests;
+namespace PSM.Common.Tests;
 
 [TestClass]
 public class EnumExtensionsTest
@@ -48,7 +49,7 @@ public class EnumExtensionsTest
     [TestMethod]
     public void TestGetCombinations2()
     {
-        var flag = TemplateInfo.GetAvailableOptionsFor(Behaviour.Existence, Scope.After_Q);
+        var flag = PropertyInfo.GetAvailableOptionsFor(Behaviour.Existence, Scope.After_Q);
         var flags = flag.GetFlags().ToList();
         var combinations = flags.GetAllCombinations().ToList();
 
@@ -56,10 +57,19 @@ public class EnumExtensionsTest
         {
             Option.None,
             Option.Bounded,
-            Option.Last_Start,
-            Option.Bounded | Option.Last_Start,
+            Option.LastStart,
+            Option.Bounded | Option.LastStart,
         };
 
         CollectionAssert.AreEqual(expected, combinations);
+    }
+
+    [TestMethod]
+    public void TestIsSubsetOf()
+    {
+        var super = Option.Bounded | Option.Finalisation;
+
+        Assert.IsTrue(Option.Bounded.IsSubsetOf(super));
+        Assert.IsFalse(Option.Immediacy.IsSubsetOf(super));
     }
 }

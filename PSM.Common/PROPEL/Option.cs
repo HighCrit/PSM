@@ -1,4 +1,4 @@
-﻿namespace PSM.Translators.MuCalc.PROPEL;
+﻿namespace PSM.Common.PROPEL;
 
 [Flags]
 public enum Option
@@ -23,7 +23,7 @@ public enum Option
     /// <summary>
     /// Whether after an A occured, if A may occur again before the first action B occurs.
     /// </summary>
-    Pre_arity = 8,
+    PreArity = 8,
 
     /// <summary>
     /// Whether action B must immediately follow action A or if other actions are allowed to occur in between.
@@ -33,7 +33,7 @@ public enum Option
     /// <summary>
     /// Whether after actions A and B occured, if B may occur again.
     /// </summary>
-    Post_arity = 32,
+    PostArity = 32,
 
     /// <summary>
     /// Whether after action A and B occured, if A may occur again.
@@ -48,15 +48,15 @@ public enum Option
     /// <summary>
     /// Whether the next occurence of the scope should also hold.
     /// </summary>
-    Scope_Repeatability = 256,
+    ScopeRepeatability = 256,
 
     /// <summary>
     /// Whether the property must hold for the last start or not.
     /// </summary>
-    Last_Start = 512,
+    LastStart = 512,
 
     /// <summary>
     /// Whether it is allowed for the END action to not occur.
     /// </summary>
-    Missing_End = 1024,
+    MissingEnd = 1024,
 }

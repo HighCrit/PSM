@@ -1,4 +1,4 @@
-﻿namespace PSM.Translators.MuCalc.PROPEL;
+﻿namespace PSM.Common.PROPEL;
 
 public enum Scope
 {

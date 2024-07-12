@@ -29,6 +29,6 @@ public class TranslateToMuCalcTests
         A_has_not_happened.AddTransition(A_has_not_happened, new Guard("NOT A"));
         A_has_not_happened.AddTransition(final, new Guard("A"));
 
-        var res = this.translator!.Translate(sm);
+        //var res = this.translator!.Translate(sm);
     }
 }

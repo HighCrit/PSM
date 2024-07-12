@@ -10,11 +10,11 @@ namespace PSM.Common.MuCalc.RegularFormula.Operators;
 /// </summary>
 /// <param name="left">The left regular formula.</param>
 /// <param name="right">The right regular formula.</param>
-public class Concatenation(RegularFormulaBase left, RegularFormulaBase right) : RegularFormulaBase
+public class Concatenation(IRegularFormula left, IRegularFormula right) : IRegularFormula
 {
-    private RegularFormulaBase Left { get; set; } = left;
+    private IRegularFormula Left { get; set; } = left;
 
-    private RegularFormulaBase Right { get; set; } = right;
+    private IRegularFormula Right { get; set; } = right;
 
     /// <inheritdoc/>
     public override string ToString()

@@ -12,11 +12,11 @@ using PSM.Common.MuCalc.RegularFormula;
 /// </summary>
 /// <param name="regularFormula">The contained regular formula.</param>
 /// <param name="formula">The subsequent modal formula.</param>
-public class Diamond(RegularFormulaBase regularFormula, ModalFormulaBase formula) : ModalFormulaBase
+public class Diamond(IRegularFormula regularFormula, IModalFormula formula) : IModalFormula
 {
-    private ModalFormulaBase Formula { get; set; } = formula;
+    private IModalFormula Formula { get; set; } = formula;
 
-    private RegularFormulaBase RegularFormula { get; set; } = regularFormula;
+    private IRegularFormula RegularFormula { get; set; } = regularFormula;
 
     /// <inheritdoc/>
     public override string ToString()

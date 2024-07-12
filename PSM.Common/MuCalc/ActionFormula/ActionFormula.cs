@@ -11,7 +11,7 @@ using PSM.Common.MuCalc.Actions;
 /// Action formual representing a single action.
 /// </summary>
 /// <param name="action">The represented action.</param>
-public class ActionFormula(Action action) : ActionFormulaBase
+public class ActionFormula(Action action) : IActionFormula
 {
     private Action Action { get; } = action;
 
