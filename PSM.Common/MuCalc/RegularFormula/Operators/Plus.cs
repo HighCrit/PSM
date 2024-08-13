@@ -9,9 +9,9 @@ namespace PSM.Common.MuCalc.RegularFormula.Operators;
 /// The Kleene plus operator for regular formulas.
 /// </summary>
 /// <param name="formula">The regular formula.</param>
-public class Plus(RegularFormulaBase formula) : RegularFormulaBase
+public class Plus(IRegularFormula formula) : IRegularFormula
 {
-    private RegularFormulaBase Formula { get; set; } = formula;
+    private IRegularFormula Formula { get; set; } = formula;
 
     /// <inheritdoc/>
     public override string ToString()

@@ -1,4 +1,4 @@
-// <copyright file="ModalFormulaBase.cs" company="HighCrit">
+// <copyright file="IModalFormula.cs" company="HighCrit">
 // Copyright (c) HighCrit. This file is released under GPLv3.
 // See LICENSE for full license details.
 // </copyright>
@@ -8,8 +8,7 @@ namespace PSM.Common.MuCalc.ModalFormula;
 /// <summary>
 /// The base class for modal formulas.
 /// </summary>
-public abstract class ModalFormulaBase
+public interface IModalFormula
 {
-    /// <inheritdoc/>
-    public abstract override string ToString();
+    public string ToString();
 }

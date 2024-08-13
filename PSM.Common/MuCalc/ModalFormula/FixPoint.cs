@@ -10,7 +10,7 @@ namespace PSM.Common.MuCalc.ModalFormula;
 /// </summary>
 /// <param name="id">The fixpoint's id.</param>
 /// <param name="values">The value to set.</param>
-public class FixPoint(string id, IEnumerable<object>? values = null) : ModalFormulaBase
+public class FixPoint(string id, IEnumerable<object>? values = null) : IModalFormula
 {
     private readonly IEnumerable<object>? values = values;
 

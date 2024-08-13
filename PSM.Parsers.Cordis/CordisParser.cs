@@ -3,16 +3,17 @@
 // See LICENSE for full license details.
 // </copyright>
 
-namespace PSM.CLI.Parser;
+namespace PSM.Parsers.Cordis;
 
 using Cordis2Cordis.XML;
 using CordisSchema;
+using PSM.Common.Parser;
 using PSM.Common.UML;
 
 /// <summary>
 /// A parser to convert UML diagrams from XML to mcf-files.
 /// </summary>
-public class CordisParser
+public class CordisParser : IStateMachineParser
 {
     private const string PropertyPackageName = "Properties";
 
@@ -41,17 +42,24 @@ public class CordisParser
 
             foreach (var s in sm.States.Items.OfType<CordisSchema.State>())
             {
-                Common.UML.State commonState = s.Name switch
+                Common.UML.State commonState = commonSm.FindOrCreate(s.Name);
+
+                commonState.Type = s.Name switch
                 {
-                    "Initial" => commonSm.FindOrCreate(s.Name, StateType.Initial),
-                    "Final" => commonSm.FindOrCreate(s.Name, StateType.Final),
-                    _ => commonSm.FindOrCreate(s.Name)
+                    "Initial" => StateType.Initial,
+                    "Final" => StateType.Final,
+                    _ when s.Name.Contains("Invalid:") => StateType.Invalid,
+                    _ => StateType.Normal,
                 };
 
-                foreach (var t in s.Transitions)
+                if (commonState.Type.HasFlag(StateType.Final))
                 {
-                    var target = commonSm.FindOrCreate(t.Target);
-                    commonState.AddTransition(target, t.Action);
+                    commonState.AddTransition(commonState);
+                }
+
+                foreach (var t in s.Transitions ?? [])
+                {
+                    commonState.AddTransition(t.Target, t.Guard is null ? null : new Guard(t.Guard));
                 }
             }
 

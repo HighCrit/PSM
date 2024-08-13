@@ -9,9 +9,9 @@ namespace PSM.Common.MuCalc.ModalFormula.Operators;
 /// The negation operator for modal formulas.
 /// </summary>
 /// <param name="formula">The sub-formula.</param>
-public class Negation(ModalFormulaBase formula)
+public class Negation(IModalFormula formula)
 {
-    private ModalFormulaBase Formula { get; set; } = formula;
+    private IModalFormula Formula { get; set; } = formula;
 
     /// <inheritdoc/>
     public override string ToString()

@@ -9,9 +9,9 @@ namespace PSM.Common.MuCalc.ActionFormula.Operators;
 /// The complement operator for an action formula.
 /// </summary>
 /// <param name="formula">The formula.</param>
-public class Complement(ActionFormulaBase formula)
+public class Complement(IActionFormula formula)
 {
-    private ActionFormulaBase Formula { get; set; } = formula;
+    private IActionFormula Formula { get; set; } = formula;
 
     /// <inheritdoc/>
     public override string ToString()

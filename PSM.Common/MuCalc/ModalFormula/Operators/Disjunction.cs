@@ -10,11 +10,11 @@ namespace PSM.Common.MuCalc.ModalFormula.Operators;
 /// </summary>
 /// <param name="left">The left modal formula.</param>
 /// <param name="right">The right modal formula.</param>
-public class Disjunction(ModalFormulaBase left, ModalFormulaBase right)
+public class Disjunction(IModalFormula left, IModalFormula right)
 {
-    private ModalFormulaBase Left { get; set; } = left;
+    private IModalFormula Left { get; set; } = left;
 
-    private ModalFormulaBase Right { get; set; } = right;
+    private IModalFormula Right { get; set; } = right;
 
     /// <inheritdoc/>
     public override string ToString()

@@ -11,10 +11,9 @@ using PSM.Common.MuCalc.ActionFormula;
 /// Regular formula represeting an action formula.
 /// </summary>
 /// <param name="formula">The action formula.</param>
-public class ActionFormula(ActionFormulaBase formula) : RegularFormulaBase
+public class ActionFormula(IActionFormula formula) : IRegularFormula
 {
-    private ActionFormulaBase Formula { get; } = formula;
+    private IActionFormula Formula { get; } = formula;
 
-    /// <inheritdoc/>
     public override string ToString() => this.Formula.ToString();
 }
