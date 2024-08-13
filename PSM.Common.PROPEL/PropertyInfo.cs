@@ -26,7 +26,7 @@ public record PropertyInfo(Behaviour Behaviour, Scope Scope, Option Option)
                 Option.Repeatability,
             _ => throw new ArgumentException($"Invalid behaviour: {behaviour}.")
         } | (scope is Scope.Between_Q_and_P ? Option.ScopeRepeatability : Option.None)
-        | (scope is Scope.After_Q or Scope.Between_Q_and_P ? Option.LastStart : Option.None)
-        | (scope is Scope.Before_P or Scope.Between_Q_and_P ? Option.MissingEnd : Option.None);
+        | (scope is Scope.After_Q or Scope.Between_Q_and_P ? Option.FirstStart : Option.None)
+        | (scope is Scope.Before_P or Scope.Between_Q_and_P ? Option.OptionalEnd : Option.None);
     }
 }

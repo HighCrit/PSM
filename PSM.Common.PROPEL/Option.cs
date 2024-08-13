@@ -53,10 +53,10 @@ public enum Option
     /// <summary>
     /// Whether the property must hold for the last start or not.
     /// </summary>
-    LastStart = 512,
+    FirstStart = 512,
 
     /// <summary>
     /// Whether it is allowed for the END action to not occur.
     /// </summary>
-    MissingEnd = 1024,
+    OptionalEnd = 1024,
 }
