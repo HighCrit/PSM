@@ -25,7 +25,7 @@ namespace PSM.Common.MuCalc.Tests
                 PhiType.Pos,
                 Bool.False,
                 new Command("com"), // CmdChk(com)
-                "(true -> [command(com,true)]false)"
+                "[command(com,true)]false"
             ],
             [
                 PhiType.Pos,
@@ -38,6 +38,14 @@ namespace PSM.Common.MuCalc.Tests
                 Bool.False,
                 new And(new Command("com"), new Variable("var", "=", Domain.INT, 1)), // CmdChk(com) && var = 1
                 "((exists s_1:Int . (<var(s_1)>true && s_1 = 1)) -> [command(com,true)]false)"
+            ],
+            [
+                PhiType.Pos,
+                Bool.False,
+                new And(
+                    new Or(new Command("com1"), new Command("com2")),
+                    new Variable("var", "=", Domain.INT, 1)), // (CmdChk(com1) || CmdChk(com2)) && var = 1
+                "((exists s_1:Int . (<var(s_1)>true && s_1 = 1)) -> [(command(com1,true) || command(com2,true))]false)"
             ],
             /*
              * [(!A)* . B]false
@@ -52,7 +60,7 @@ namespace PSM.Common.MuCalc.Tests
                 PhiType.Neg,
                 new Box(new RegularFormula.ActionFormula(new ActionFormula.ActionFormula(new Action(Event.B.ToString()))), Bool.False),
                 new Command("com"), // CmdChk(com)
-                "[!command(com,true)*](true -> [B]false)"
+                "[!command(com,true)*][B]false"
             ],
             [
                 PhiType.Neg,
@@ -65,6 +73,14 @@ namespace PSM.Common.MuCalc.Tests
                 new Box(new RegularFormula.ActionFormula(new ActionFormula.ActionFormula(new Action(Event.B.ToString()))), Bool.False),
                 new And(new Command("com"), new Variable("var", "=", Domain.INT, 1)), // CmdChk(com) && var = 1
                 "[!command(com,true)*]((exists s_1:Int . (<var(s_1)>true && s_1 = 1)) -> [B]false)"
+            ],
+            [
+                PhiType.Neg,
+                new Box(new RegularFormula.ActionFormula(new ActionFormula.ActionFormula(new Action(Event.B.ToString()))), Bool.False),
+                new And(
+                    new Or(new Command("com1"), new Command("com2")),
+                    new Variable("var", "=", Domain.INT, 1)), // (CmdChk(com1) || CmdChk(com2)) && var = 1
+                "[!(command(com1,true) || command(com2,true))*]((exists s_1:Int . (<var(s_1)>true && s_1 = 1)) -> [B]false)"
             ],
             /*
              * [(!A)* . B]false
@@ -79,7 +95,7 @@ namespace PSM.Common.MuCalc.Tests
                 PhiType.Fix,
                 new FixPoint("X"),
                 new Command("com"), // CmdChk(com)
-                "[!command(com,true)](!true -> X)"
+                "[!command(com,true)]X"
             ],
             [
                 PhiType.Fix,
@@ -92,6 +108,14 @@ namespace PSM.Common.MuCalc.Tests
                 new FixPoint("X"),
                 new And(new Command("com"), new Variable("var", "=", Domain.INT, 1)), // CmdChk(com) || var = 1
                 "[!command(com,true)](!(exists s_1:Int . (<var(s_1)>true && s_1 = 1)) -> X)"
+            ],
+            [
+                PhiType.Fix,
+                new FixPoint("X"),
+                new And(
+                    new Or(new Command("com1"), new Command("com2")),
+                    new Variable("var", "=", Domain.INT, 1)), // (CmdChk(com1) || CmdChk(com2)) && var = 1
+                "[!(command(com1,true) || command(com2,true))](!(exists s_1:Int . (<var(s_1)>true && s_1 = 1)) -> X)"
             ],
         ];
 
