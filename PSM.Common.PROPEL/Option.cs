@@ -1,47 +1,57 @@
 ﻿namespace PSM.Common.PROPEL;
 
+/// <summary>
+/// An enum containing the available scope-behaviour options.
+/// </summary>
 [Flags]
 public enum Option
 {
+    /// <summary>
+    /// Denotes that no behaviour options are selected.
+    /// </summary>
     None = 0,
 
     /// <summary>
-    /// Whether an action A may occur only once or more.
+    /// Whether an <see cref="Event.A"/> may occur only once or more.
     /// </summary>
     Bounded = 1,
 
     /// <summary>
-    /// Whether an action A is required to occur.
+    /// Whether an <see cref="Event.A"/> is required to occur.
     /// </summary>
     Nullity = 2,
 
     /// <summary>
-    /// Whether an action B is allowed to occur before A.
+    /// Whether an <see cref="Event.B"/> is allowed to occur before the first <see cref="Event.A"/>.
     /// </summary>
     Precedency = 4,
 
     /// <summary>
-    /// Whether after an A occured, if A may occur again before the first action B occurs.
+    /// Whether after an <see cref="Event.A"/> occured, if <see cref="Event.A"/> may occur again before the first
+    /// <see cref="Event.B"/> occurs.
     /// </summary>
     PreArity = 8,
 
     /// <summary>
-    /// Whether action B must immediately follow action A or if other actions are allowed to occur in between.
+    /// Whether <see cref="Event.B"/> must immediately follow <see cref="Event.A"/>.
     /// </summary>
     Immediacy = 16,
 
     /// <summary>
-    /// Whether after actions A and B occured, if B may occur again.
+    /// Whether after <see cref="Event.A"/> and <see cref="Event.B"/> occured, if <see cref="Event.B"/> may
+    /// occur again.
     /// </summary>
     PostArity = 32,
 
     /// <summary>
-    /// Whether after action A and B occured, if A may occur again.
+    /// Whether after <see cref="Event.A"/> and <see cref="Event.B"/> occured, if <see cref="Event.A"/> may
+    /// not occur again.
     /// </summary>
     Finalisation = 64,
 
     /// <summary>
-    /// Whether after actions A and B occured, if the property should hold again for the next occurence of A.
+    /// Whether after <see cref="Event.A"/> and <see cref="Event.B"/> occured, if the property should hold again for
+    /// the next occurence of <see cref="Event.A"/>.
     /// </summary>
     Repeatability = 128,
 
@@ -51,12 +61,12 @@ public enum Option
     ScopeRepeatability = 256,
 
     /// <summary>
-    /// Whether the property must hold for the last start or not.
+    /// Whether the restricted interval starts at the first or last <see cref="Event.Start"/>.
     /// </summary>
     FirstStart = 512,
 
     /// <summary>
-    /// Whether it is allowed for the END action to not occur.
+    /// Whether it is allowed for <see cref="Event.End"/> to not occur.
     /// </summary>
     OptionalEnd = 1024,
 }

@@ -8,7 +8,17 @@ namespace PSM.Common.MuCalc.ActionFormula;
 /// <summary>
 /// Base class for action formulas.
 /// </summary>
-public interface IActionFormula
+public interface IActionFormula : IMuCalc
 {
-    public string ToString();
+    /// <summary>
+    /// Converts the mu-calculus formula to a string for pretty LaTeX markup.
+    /// </summary>
+    /// <returns>A latex mu-calculus formula.</returns>
+    public string ToLatex();
+
+    /// <summary>
+    /// Converts the mu-calculus formula to a string interpretable by the mCRL2 toolset.
+    /// </summary>
+    /// <returns>An mCRL2 mu-calculus formula.</returns>
+    public string ToMCRL2();
 }

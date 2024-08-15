@@ -5,22 +5,29 @@
 
 namespace PSM.Common.MuCalc.ModalFormula;
 
+using PSM.Common.MuCalc.Dissections.Labels;
 using PSM.Common.MuCalc.RegularFormula;
 
 /// <summary>
 /// The diamond modality.
 /// </summary>
-/// <param name="regularFormula">The contained regular formula.</param>
+/// <param name="innerFormula">The contained regular formula.</param>
 /// <param name="formula">The subsequent modal formula.</param>
-public class Diamond(IRegularFormula regularFormula, IModalFormula formula) : IModalFormula
+public class Diamond(IRegularFormula innerFormula, IModalFormula formula) : IModalFormula
 {
-    private IModalFormula Formula { get; set; } = formula;
+    public IRegularFormula InnerFormula { get; } = innerFormula;
 
-    private IRegularFormula RegularFormula { get; set; } = regularFormula;
+    public IModalFormula Formula { get; } = formula;
 
-    /// <inheritdoc/>
-    public override string ToString()
+    /// <inheritdoc />
+    public string ToLatex(Dictionary<Event, IExpression> substitutions)
     {
-        return $"<{this.RegularFormula}>{this.Formula}";
+        return $"\\langle{this.InnerFormula.ToLatex()}\\rangle{this.Formula.ToLatex(substitutions)}";
+    }
+
+    /// <inheritdoc />
+    public string ToMCRL2(Dictionary<Event, IExpression>? substitutions)
+    {
+        return $"<{this.InnerFormula.ToMCRL2()}>{this.Formula.ToMCRL2(substitutions)}";
     }
 }

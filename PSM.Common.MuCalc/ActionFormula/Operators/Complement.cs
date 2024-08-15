@@ -9,13 +9,17 @@ namespace PSM.Common.MuCalc.ActionFormula.Operators;
 /// The complement operator for an action formula.
 /// </summary>
 /// <param name="formula">The formula.</param>
-public class Complement(IActionFormula formula)
+public class Complement(IActionFormula formula) : IActionFormula
 {
-    private IActionFormula Formula { get; set; } = formula;
+    private IActionFormula Formula { get; } = formula;
 
-    /// <inheritdoc/>
-    public override string ToString()
+    public string ToLatex()
     {
-        return $"!{this.Formula}";
+        return $"\\overline{{{this.Formula.ToLatex()}}}";
+    }
+
+    public string ToMCRL2()
+    {
+        return $"!{this.Formula.ToMCRL2()}";
     }
 }

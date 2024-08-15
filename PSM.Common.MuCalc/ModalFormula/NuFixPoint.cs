@@ -3,6 +3,8 @@
 // See LICENSE for full license details.
 // </copyright>
 
+using PSM.Common.MuCalc.Dissections.Labels;
+
 namespace PSM.Common.MuCalc.ModalFormula;
 
 /// <summary>
@@ -20,20 +22,28 @@ public class NuFixPoint : IModalFormula
     {
         this.Id = id;
         this.Formula = formula;
-        this.Parameters = parameters;
+        this.Parameters = parameters?.ToList();
     }
 
-    private string Id { get; set; }
+    public string Id { get; }
 
-    private IModalFormula Formula { get; set; }
+    public IModalFormula Formula { get; }
 
-    private IEnumerable<Parameter>? Parameters { get; set; }
+    public IList<Parameter>? Parameters { get; }
 
-    /// <inheritdoc/>
-    public override string ToString()
+    /// <inheritdoc />
+    public string ToLatex(Dictionary<Event, IExpression> substitutions)
     {
         return this.Parameters is null
-                    ? $"nu {this.Id} . {this.Formula})"
-                    : $"nu {this.Id} ({string.Join(',', this.Parameters)}) . {this.Formula})";
+            ? $"\\nu {this.Id} . {this.Formula})"
+            : $"\\nu {this.Id} ({string.Join(',', this.Parameters)}) . {this.Formula.ToLatex(substitutions)})";
+    }
+
+    /// <inheritdoc />
+    public string ToMCRL2(Dictionary<Event, IExpression>? substitutions)
+    {
+        return this.Parameters is null
+            ? $"nu {this.Id} . {this.Formula})"
+            : $"nu {this.Id} ({string.Join(',', this.Parameters)}) . {this.Formula.ToMCRL2(substitutions)})";
     }
 }

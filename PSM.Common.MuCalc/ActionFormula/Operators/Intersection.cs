@@ -10,15 +10,19 @@ namespace PSM.Common.MuCalc.ActionFormula.Operators;
 /// </summary>
 /// <param name="left">The left hand side formula.</param>
 /// <param name="right">The right hand side formula.</param>
-public class Intersection(IActionFormula left, IActionFormula right)
+public class Intersection(IActionFormula left, IActionFormula right) : IActionFormula
 {
-    private IActionFormula Left { get; set; } = left;
+    private IActionFormula Left { get; } = left;
 
-    private IActionFormula Right { get; set; } = right;
+    private IActionFormula Right { get; } = right;
 
-    /// <inheritdoc/>
-    public override string ToString()
+    public string ToLatex()
     {
-        return $"({this.Left} && {this.Right})";
+        return $"{this.Left.ToLatex()} \\cap {this.Right.ToLatex()}";
+    }
+
+    public string ToMCRL2()
+    {
+        return $"({this.Left.ToMCRL2()} && {this.Right.ToMCRL2()})";
     }
 }

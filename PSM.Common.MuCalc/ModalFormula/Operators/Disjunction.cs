@@ -3,6 +3,8 @@
 // See LICENSE for full license details.
 // </copyright>
 
+using PSM.Common.MuCalc.Dissections.Labels;
+
 namespace PSM.Common.MuCalc.ModalFormula.Operators;
 
 /// <summary>
@@ -10,15 +12,19 @@ namespace PSM.Common.MuCalc.ModalFormula.Operators;
 /// </summary>
 /// <param name="left">The left modal formula.</param>
 /// <param name="right">The right modal formula.</param>
-public class Disjunction(IModalFormula left, IModalFormula right)
+public class Disjunction(IModalFormula left, IModalFormula right) : IModalFormula
 {
-    private IModalFormula Left { get; set; } = left;
+    public IModalFormula Left { get; } = left;
 
-    private IModalFormula Right { get; set; } = right;
+    public IModalFormula Right { get; } = right;
 
-    /// <inheritdoc/>
-    public override string ToString()
+    public string ToLatex(Dictionary<Event, IExpression> substitutions)
     {
-        return $"({this.Left} || {this.Right})";
+        return $@"({this.Left.ToLatex(substitutions)} \lor {this.Right.ToLatex(substitutions)})";
+    }
+
+    public string ToMCRL2(Dictionary<Event, IExpression>? substitutions)
+    {
+        return $"({this.Left.ToMCRL2(substitutions)} || {this.Right.ToMCRL2(substitutions)})";
     }
 }

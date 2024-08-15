@@ -3,19 +3,25 @@
 // See LICENSE for full license details.
 // </copyright>
 
+using PSM.Common.MuCalc.Dissections.Labels;
+
 namespace PSM.Common.MuCalc.ModalFormula.Operators;
 
 /// <summary>
 /// The negation operator for modal formulas.
 /// </summary>
 /// <param name="formula">The sub-formula.</param>
-public class Negation(IModalFormula formula)
+public class Negation(IModalFormula formula) : IModalFormula
 {
-    private IModalFormula Formula { get; set; } = formula;
+    public IModalFormula Formula { get; } = formula;
 
-    /// <inheritdoc/>
-    public override string ToString()
+    public string ToLatex(Dictionary<Event, IExpression> substitutions)
     {
-        return $"!{this.Formula}";
+        return $@"\neg{this.Formula.ToLatex(substitutions)}";
+    }
+
+    public string ToMCRL2(Dictionary<Event, IExpression>? substitutions)
+    {
+        return $"!{this.Formula.ToMCRL2(substitutions)}";
     }
 }

@@ -12,13 +12,13 @@ namespace PSM.Common.MuCalc.RegularFormula.Operators;
 /// <param name="right">The right regular formula.</param>
 public class Concatenation(IRegularFormula left, IRegularFormula right) : IRegularFormula
 {
-    private IRegularFormula Left { get; set; } = left;
-
-    private IRegularFormula Right { get; set; } = right;
-
-    /// <inheritdoc/>
-    public override string ToString()
+    public string ToLatex()
     {
-        return $"({this.Left} . {this.Right})";
+        return $"{left.ToLatex()} \\cdot {right.ToLatex()}";
+    }
+
+    public string ToMCRL2()
+    {
+        return $"{left.ToMCRL2()} . {right.ToMCRL2()}";
     }
 }

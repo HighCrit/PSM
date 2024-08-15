@@ -1,17 +1,20 @@
-﻿using PSM.Common.MuCalc.ModalFormula;
-using PSM.Common.MuCalc.RegularFormula;
+﻿using PSM.Common.MuCalc.Dissections.Labels;
+using PSM.Common.MuCalc.ModalFormula;
 
 namespace PSM.Common.MuCalc.Common;
 
-public class BooleanExp(string value) : IModalFormula, IRegularFormula
+public class BooleanExp(string value) : IModalFormula
 {
-    public static BooleanExp True = new("true");
-    public static BooleanExp False = new("false");
+    public string Value { get; } = value;
 
-    private readonly string value = value;
-
-    public override string ToString()
+    public virtual string ToLatex(Dictionary<Event, IExpression> substitutions)
     {
-        return this.value;
+        // TODO: Make value an expression instead of string.
+        return this.Value;
+    }
+
+    public virtual string ToMCRL2(Dictionary<Event, IExpression> substitutions)
+    {
+        return this.Value;
     }
 }

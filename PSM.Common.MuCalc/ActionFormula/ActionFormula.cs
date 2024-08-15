@@ -15,6 +15,18 @@ public class ActionFormula(Action action) : IActionFormula
 {
     private Action Action { get; } = action;
 
-    /// <inheritdoc/>
-    public override string ToString() => this.Action.ToString();
+    public string ToLatex()
+    {
+        return this.Action.ToLatex();
+    }
+
+    public string ToMCRL2()
+    {
+        return this.Action.ToMCRL2();
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is ActionFormula af && this.Action.Equals(af.Action);
+    }
 }

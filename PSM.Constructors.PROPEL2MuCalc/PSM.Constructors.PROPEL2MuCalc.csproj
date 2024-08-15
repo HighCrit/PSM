@@ -11,11 +11,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\PSM.Common.MuCalc\PSM.Common.MuCalc.csproj" />
+    <ProjectReference Include="..\PSM.Common.PROPEL\PSM.Common.PROPEL.csproj" />
     <ProjectReference Include="..\PSM.Common\PSM.Common.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Dissections\Labels\Operations\" />
   </ItemGroup>
 
 </Project>

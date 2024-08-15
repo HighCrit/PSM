@@ -1,6 +1,4 @@
-﻿using PSM.Common.PROPEL;
-
-namespace PSM.Translators.PROPEL;
+﻿namespace PSM.Common;
 
 public static class EnumExtensions
 {
@@ -22,7 +20,7 @@ public static class EnumExtensions
                 .Select(a => a.Aggregate(zero, (acc, @new) => (T)(object)((int)(object)acc | (int)(object)@new)));
     }
 
-    public static bool IsSubsetOf(this Option sub, Option super)
+    public static bool IsSubsetOf(this int sub, int super)
     {
         return (sub & ~super) == 0;
     }

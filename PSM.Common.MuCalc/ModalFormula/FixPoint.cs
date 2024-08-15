@@ -3,6 +3,8 @@
 // See LICENSE for full license details.
 // </copyright>
 
+using PSM.Common.MuCalc.Dissections.Labels;
+
 namespace PSM.Common.MuCalc.ModalFormula;
 
 /// <summary>
@@ -12,18 +14,26 @@ namespace PSM.Common.MuCalc.ModalFormula;
 /// <param name="values">The value to set.</param>
 public class FixPoint(string id, IEnumerable<object>? values = null) : IModalFormula
 {
-    private readonly IEnumerable<object>? values = values;
-
     /// <summary>
     /// Gets the id of the fixpoint.
     /// </summary>
     public string Id { get; } = id;
 
-    /// <inheritdoc/>
-    public override string ToString()
+    public IList<object>? Values { get; } = values?.ToList();
+
+    /// <inheritdoc />
+    public string ToLatex(Dictionary<Event, IExpression> substitutions)
     {
-        return this.values is null
-                    ? $"{this.Id}"
-                    : $"{this.Id}({string.Join(',', this.values)})";
+        return this.Values is null
+            ? $"{this.Id}"
+            : $"{this.Id}({string.Join(',', this.Values)})";
+    }
+
+    /// <inheritdoc />
+    public string ToMCRL2(Dictionary<Event, IExpression>? substitutions)
+    {
+        return this.Values is null
+            ? $"{this.Id}"
+            : $"{this.Id}({string.Join(',', this.Values)})";
     }
 }

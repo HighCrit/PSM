@@ -20,9 +20,9 @@ public class Parameter(string name, Domain domain, object value)
     /// </summary>
     public string Name { get; } = name;
 
-    private Domain Domain { get; } = domain;
+    public Domain Domain { get; } = domain;
 
-    private object Value { get; } = value;
+    public object Value { get; } = value;
 
     /// <inheritdoc/>
     public override string ToString()

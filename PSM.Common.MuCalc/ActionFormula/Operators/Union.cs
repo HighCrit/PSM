@@ -10,15 +10,19 @@ namespace PSM.Common.MuCalc.ActionFormula.Operators;
 /// </summary>
 /// <param name="left">The left hand formula.</param>
 /// <param name="right">The right hand formula.</param>
-public class Union(IActionFormula left, IActionFormula right)
+public class Union(IActionFormula left, IActionFormula right) : IActionFormula
 {
-    private IActionFormula Left { get; set; } = left;
+    public IActionFormula Left { get; } = left;
 
-    private IActionFormula Right { get; set; } = right;
+    public IActionFormula Right { get; } = right;
 
-    /// <inheritdoc/>
-    public override string ToString()
+    public string ToLatex()
     {
-        return $"({this.Left} || {this.Right})";
+        return $"{this.Left.ToLatex()} \\cup {this.Right.ToLatex()}";
+    }
+
+    public string ToMCRL2()
+    {
+        return $"({this.Left.ToMCRL2()} || {this.Right.ToMCRL2()})";
     }
 }
