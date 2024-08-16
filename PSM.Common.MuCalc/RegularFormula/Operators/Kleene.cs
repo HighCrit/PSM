@@ -11,13 +11,15 @@ namespace PSM.Common.MuCalc.RegularFormula.Operators;
 /// <param name="formula">The regular formula.</param>
 public class Kleene(IRegularFormula formula) : IRegularFormula
 {
+    private IRegularFormula Formula { get; } = formula;
+    
     public string ToLatex()
     {
-        return $"{formula.ToLatex()}^*";
+        return $"{Formula.ToLatex()}^*";
     }
 
     public string ToMCRL2()
     {
-        return $"{formula.ToMCRL2()}*";
+        return $"{Formula.ToMCRL2()}*";
     }
 }
