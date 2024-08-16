@@ -46,10 +46,18 @@ public class Phi(PhiType type, Event ev, IModalFormula sig) : IModalFormula
     {
         var expressions = this.GetLabelExpressions(substitutions);
 
-        // TODO: Add support for Fix and Neg
-        var expression = expressions[0];
+        if (expressions.Count == 1)
+        {
+            return this.ParseExpression(expressions[0]);
+        }
+        // Sometimes used by Neg and Fix patterns
+        else if (expressions.Count == 2 && this.Type is PhiType.Neg or PhiType.Fix)
+        {
+            var exp = new Or(expressions[0], expressions[1]);
+            return this.ParseExpression(exp);
+        }
 
-        return this.ParseExpression(expression);
+        throw new ArgumentException($"Expected 1 or 2 expressions, got {expressions.Count}");
     }
 
     public IModalFormula ParseExpression(IExpression expression, IActionFormula? commands = null)
@@ -60,10 +68,10 @@ public class Phi(PhiType type, Event ev, IModalFormula sig) : IModalFormula
             Or or => this.ParseOr(or, commands),
             Variable v => this.ParseVariable(v, commands),
             Command c => this.ParseCommand(c),
-            _ => throw new ArgumentException(nameof(expression))
+            _ => throw new ArgumentException(null, nameof(expression))
         };
     }
-
+    
     public IModalFormula ParseAnd(And and, IActionFormula? commands)
     {
         // All sub nodes are connected by And, therefore we can simplify
@@ -84,6 +92,20 @@ public class Phi(PhiType type, Event ev, IModalFormula sig) : IModalFormula
         {
             var com = this.GetUnionOfCommands(and.Right);
             return this.ParseExpression(and.Left, com);
+        }
+        
+        // Distribute AND over OR.
+        if (and.Left is Or orLeft)
+        {
+            return this.ParseExpression(new Or(
+                new And(orLeft.Left, and.Right),
+                new And(orLeft.Right, and.Right)));
+        }
+        else if (and.Right is Or orRight)
+        {
+            return this.ParseExpression(new Or(
+                new And(orRight.Left, and.Left),
+                new And(orRight.Right, and.Left)));
         }
 
         return new Conjunction(this.ParseExpression(and.Left), this.ParseExpression(and.Right));

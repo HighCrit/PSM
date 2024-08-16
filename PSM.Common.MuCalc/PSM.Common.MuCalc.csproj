@@ -14,8 +14,4 @@
     <ProjectReference Include="..\PSM.Common\PSM.Common.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Dissections\Labels\Operations\" />
-  </ItemGroup>
-
 </Project>

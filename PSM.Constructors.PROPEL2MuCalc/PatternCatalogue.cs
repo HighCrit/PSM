@@ -4,10 +4,14 @@
 // </copyright>
 
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using PSM.Common;
+using PSM.Common.MuCalc.ActionFormula.Operators;
 using PSM.Common.MuCalc.Common;
 using PSM.Common.MuCalc.Dissections;
 using PSM.Common.MuCalc.ModalFormula;
+using PSM.Common.MuCalc.ModalFormula.Operators;
+using PSM.Common.MuCalc.RegularFormula;
 using PSM.Common.MuCalc.RegularFormula.Operators;
 using PSM.Common.PROPEL;
 
@@ -20,6 +24,8 @@ public static class PatternCatalogue
         return behaviour switch
         {
             Behaviour.Absence => GetAbsencePattern(scope, option),
+            Behaviour.Existence => GetExistencePattern(scope, option),
+            Behaviour.Response => GetResponsePattern(scope, option),
             _ => throw new NotSupportedException($"The provided behaviour '{behaviour}' is currently not supported")
         };
     }
@@ -30,6 +36,27 @@ public static class PatternCatalogue
         {
             Scope.Global => GetAbsenceGlobalPattern(option),
             Scope.Between => GetAbsenceBetweenPattern(option),
+            _ => throw new NotSupportedException(
+                $"The provided scope '{scope}' is currently not supported for the absence behaviour")
+        };
+    }
+
+    private static IModalFormula GetExistencePattern(Scope scope, Option option)
+    {
+        return scope switch
+        {
+            Scope.Between => GetExistenceBetweenPattern(option),
+            _ => throw new NotSupportedException(
+                $"The provided scope '{scope}' is currently not supported for the existence behaviour")
+        };
+    }
+    
+    private static IModalFormula GetResponsePattern(Scope scope, Option option)
+    {
+        return scope switch
+        {
+            Scope.Global => GetResponseGlobalPattern(option),
+            Scope.Between => GetResponseBetweenPattern(option),
             _ => throw new NotSupportedException(
                 $"The provided scope '{scope}' is currently not supported for the absence behaviour")
         };
@@ -60,6 +87,58 @@ public static class PatternCatalogue
                         new Phi(PhiType.Pos, Event.A, new Phi(PhiType.Neg, Event.End, new Phi(PhiType.Pos, Event.End, Bool.False)))))),
             _ => throw new NotSupportedException(
                 $"The provided option combination '{option}' is currently not supported for the absence behaviour with between scope")
+        };
+    }
+    #endregion
+
+    #region Existence
+    private static IModalFormula GetExistenceBetweenPattern(Option option)
+    {
+        return option switch
+        {
+            // [true*. START ](([true*. START ] false) => [(not ( A or END ))*. END ] false)
+            Option.FirstStart | Option.ScopeRepeatability =>
+                new Box(new Kleene(Bool.True),
+                    new Implication(new Box(new Kleene(Bool.True), new Phi(PhiType.Pos, Event.Start, Bool.False)),
+                        new Phi(PhiType.Neg, Event.A | Event.End, new Phi(PhiType.Pos, Event.End, Bool.False)))),
+            _ => throw new NotSupportedException(
+                $"The provided option combination '{option}' is currently not supported for the existence behaviour with between scope")
+        };
+    }
+    #endregion
+    
+    #region Response
+    private static IModalFormula GetResponseGlobalPattern(Option option)
+    {
+        return option switch
+        {
+            // [true*. A ] mu X. <true> true and [not B ] X
+            Option.Nullity | Option.Precedency | Option.PreArity | Option.PostArity | Option.Repeatability =>
+                new Box(new Kleene(Bool.True),
+                    new Phi(PhiType.Pos, Event.A,
+                        new MuFixPoint("X",
+                            new Conjunction(new Diamond(Bool.True, Bool.True),
+                                new Phi(PhiType.Fix, Event.B, new FixPoint("X")))))),
+            _ => throw new NotSupportedException(
+                $"The provided option combination '{option}' is currently not supported for the response behaviour with global scope")
+        };
+    }
+    
+    private static IModalFormula GetResponseBetweenPattern(Option option)
+    {
+        return option switch
+        {
+            // [true*. START . (not END )*. A. (not ( B or END ))*. END ] false
+            Option.Nullity | Option.Precedency | Option.PreArity | Option.PostArity | Option.Repeatability |
+                Option.ScopeRepeatability | Option.FirstStart =>
+                new Box(new Kleene(Bool.True),
+                    new Phi(PhiType.Pos, Event.Start,
+                        new Phi(PhiType.Neg, Event.End,
+                            new Phi(PhiType.Pos, Event.A,
+                                new Phi(PhiType.Neg, Event.B | Event.End,
+                                    new Phi(PhiType.Pos, Event.End, Bool.False)))))),
+            _ => throw new NotSupportedException(
+                $"The provided option combination '{option}' is currently not supported for the response behaviour with between scope")
         };
     }
     #endregion
