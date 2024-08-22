@@ -2,50 +2,34 @@
 
 public class And : IExpression
 {
-    public IExpression Left { get; }
+    public IList<IExpression> Expressions { get; }
 
-    public IExpression Right { get; }
-
-    public And(IExpression left, IExpression right)
+    public And(params IExpression[] expressions) : this(expressions.ToList())
     {
-        if (left.ContainsCommands() && right.ContainsCommands())
-            throw new ArgumentException("Cannot extract meaning from AND with commands on both sides.");
-
-        this.Left = left;
-        this.Right = right;
+    }
+    
+    public And(IEnumerable<IExpression> expressions)
+    {
+        this.Expressions = expressions.ToList();
+        
+        if (this.Expressions .Count() < 2)
+            throw new ArgumentException("There must be at least 2 expressions.");
+        if (this.Expressions.Count(e => e.GetCommandsInSubTree().Any()) > 1)
+            throw new ArgumentException("Could not infer meaning from conjunction over two positive occurence of CmdChk.");
     }
 
     public IEnumerable<Command> GetCommandsInSubTree()
     {
-        return this.Left.GetCommandsInSubTree().Concat(this.Right.GetCommandsInSubTree());
+        return this.Expressions.SelectMany(e => e.GetCommandsInSubTree());
     }
-
-    public IEnumerable<Variable> GetVariablesInSubTree()
-    {
-        return this.Left.GetVariablesInSubTree().Concat(this.Right.GetVariablesInSubTree());
-    }
-
-    public bool ContainsCommands()
-    {
-        return this.Left.ContainsCommands() || this.Right.ContainsCommands();
-    }
-
-    public bool ContainsVariables()
-    {
-        return this.Left.ContainsVariables() || this.Right.ContainsVariables();
-    }
-
-    public bool ContainsAnd() => true;
-
-    public bool ContainsOr() => this.Left.ContainsOr() || this.Right.ContainsOr();
 
     public string ToLatex()
     {
-        return $"({this.Left.ToLatex()} \\land {this.Right.ToLatex()})";
+        return $"({string.Join(@"\land", this.Expressions.Select(e => e.ToLatex()))})";
     }
 
     public string ToMCRL2()
     {
-        return $"({this.Left.ToMCRL2()} && {this.Right.ToMCRL2()})";
+        return $"({string.Join("&&", this.Expressions.Select(e => e.ToMCRL2()))})";
     }
 }

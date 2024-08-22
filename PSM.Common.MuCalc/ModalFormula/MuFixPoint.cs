@@ -34,14 +34,14 @@ public class MuFixPoint : IModalFormula
     public string ToLatex(Dictionary<Event, IExpression> substitutions)
     {
         return this.Parameters is null
-            ? $"\\mu {this.Id} . {this.Formula})"
+            ? $"\\mu {this.Id} . {this.Formula.ToLatex(substitutions)})"
             : $"\\mu {this.Id} ({string.Join(',', this.Parameters)}) . {this.Formula.ToLatex(substitutions)})";
     }
 
     public string ToMCRL2(Dictionary<Event, IExpression>? substitutions)
     {
         return this.Parameters is null
-            ? $"mu {this.Id} . {this.Formula})"
+            ? $"mu {this.Id} . {this.Formula.ToMCRL2(substitutions)})"
             : $"mu {this.Id} ({string.Join(',', this.Parameters)}) . {this.Formula.ToMCRL2(substitutions)})";
     }
 }

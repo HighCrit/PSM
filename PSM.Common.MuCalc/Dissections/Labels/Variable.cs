@@ -17,19 +17,6 @@ public class Variable(string name, string operand, Domain domain, object value) 
         return [];
     }
 
-    public IEnumerable<Variable> GetVariablesInSubTree()
-    {
-        return [this];
-    }
-
-    public bool ContainsCommands() => false;
-
-    public bool ContainsVariables() => true;
-
-    public bool ContainsAnd() => false;
-
-    public bool ContainsOr() => false;
-
     public string ToLatex()
     {
         return $@"\exists_{{s_1: {this.Domain}}} . \langle{this.Name}(s_1)\rangle \land s_1 {this.Operand} {this.Value}";

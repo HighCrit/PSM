@@ -32,13 +32,13 @@ namespace PSM.Common.MuCalc.Tests
                 PhiType.Pos,
                 Bool.False,
                 new Or(new Command("com"), new Variable("var", "=", Domain.INT, 1)), // CmdChk(com) || var = 1
-                "(((exists s_1:Int . (<var(s_1)>true && s_1 = 1)) -> [true]false) || [command(com,true)]false)"
+                "([(false || command(com,true))]false || ((false || (exists s_1:Int . (<var(s_1)>true && s_1 = 1))) -> [true]false))"
             ],
             [
                 PhiType.Pos,
                 Bool.False,
                 new And(new Command("com"), new Variable("var", "=", Domain.INT, 1)), // CmdChk(com) && var = 1
-                "((exists s_1:Int . (<var(s_1)>true && s_1 = 1)) -> [command(com,true)]false)"
+                "((true && (exists s_1:Int . (<var(s_1)>true && s_1 = 1))) -> [command(com,true)]false)"
             ],
             [
                 PhiType.Pos,
@@ -46,7 +46,7 @@ namespace PSM.Common.MuCalc.Tests
                 new And(
                     new Or(new Command("com1"), new Command("com2")),
                     new Variable("var", "=", Domain.INT, 1)), // (CmdChk(com1) || CmdChk(com2)) && var = 1
-                "((exists s_1:Int . (<var(s_1)>true && s_1 = 1)) -> [(command(com1,true) || command(com2,true))]false)"
+                "((false || ((true && (exists s_1:Int . (<var(s_1)>true && s_1 = 1))) -> [command(com1,true)]false)) || ((true && (exists s_1:Int . (<var(s_1)>true && s_1 = 1))) -> [command(com2,true)]false))"
             ],
             [
                 PhiType.Pos,
@@ -54,7 +54,8 @@ namespace PSM.Common.MuCalc.Tests
                 new And(
                     new Or(new Command("com"), new Variable("var2", "=", Domain.INT, 2)),
                     new Variable("var1", "=", Domain.INT, 1)), // (CmdChk(com) || var2 = 2) && var1 = 1
-                "(((exists s_1:Int . (<var1(s_1)>true && s_1 = 1)) -> [command(com,true)]false) || (((exists s_1:Int . (<var2(s_1)>true && s_1 = 2)) && (exists s_1:Int . (<var1(s_1)>true && s_1 = 1))) -> [true]false))"
+                "((false || ((true && (exists s_1:Int . (<var1(s_1)>true && s_1 = 1))) -> [command(com,true)]false)) || " +
+                "(((true && (exists s_1:Int . (<var1(s_1)>true && s_1 = 1))) && (exists s_1:Int . (<var2(s_1)>true && s_1 = 2))) -> [true]false))"
             ],
             /*
              * [(!A)* . B]false
@@ -63,7 +64,7 @@ namespace PSM.Common.MuCalc.Tests
                 PhiType.Neg,
                 new Box(new RegularFormula.ActionFormula(new ActionFormula.ActionFormula(new Action(Event.B.ToString()))), Bool.False),
                 new Variable("var", "=", Domain.INT, 1), // var = 1
-                "[true*]((exists s_1:Int . (<var(s_1)>true && s_1 = 1)) -> [B]false)"
+                "nu P_1 . ((!(exists s_1:Int . (<var(s_1)>true && s_1 = 1)) -> [true]P_1) && [B]false))"
             ],
             [
                 PhiType.Neg,
@@ -75,13 +76,13 @@ namespace PSM.Common.MuCalc.Tests
                 PhiType.Neg,
                 new Box(new RegularFormula.ActionFormula(new ActionFormula.ActionFormula(new Action(Event.B.ToString()))), Bool.False),
                 new Or(new Command("com"), new Variable("var", "=", Domain.INT, 1)), // CmdChk(com) || var = 1
-                "([true*]((exists s_1:Int . (<var(s_1)>true && s_1 = 1)) -> [B]false) || [!command(com,true)*][B]false)"
+                "([!(false || command(com,true))*][B]false || nu P_1 . ((!(false || (exists s_1:Int . (<var(s_1)>true && s_1 = 1))) -> [true]P_1) && [B]false)))"
             ],
             [
                 PhiType.Neg,
                 new Box(new RegularFormula.ActionFormula(new ActionFormula.ActionFormula(new Action(Event.B.ToString()))), Bool.False),
                 new And(new Command("com"), new Variable("var", "=", Domain.INT, 1)), // CmdChk(com) && var = 1
-                "[!command(com,true)*]((exists s_1:Int . (<var(s_1)>true && s_1 = 1)) -> [B]false)"
+                "nu P_1 . ((!(true && (exists s_1:Int . (<var(s_1)>true && s_1 = 1))) -> [!command(com,true)]P_1) && [B]false))"
             ],
             [
                 PhiType.Neg,
@@ -89,7 +90,7 @@ namespace PSM.Common.MuCalc.Tests
                 new And(
                     new Or(new Command("com1"), new Command("com2")),
                     new Variable("var", "=", Domain.INT, 1)), // (CmdChk(com1) || CmdChk(com2)) && var = 1
-                "[!(command(com1,true) || command(com2,true))*]((exists s_1:Int . (<var(s_1)>true && s_1 = 1)) -> [B]false)"
+                "((false || nu P_1 . ((!(true && (exists s_1:Int . (<var(s_1)>true && s_1 = 1))) -> [!command(com1,true)]P_1) && [B]false))) || nu P_1 . ((!(true && (exists s_1:Int . (<var(s_1)>true && s_1 = 1))) -> [!command(com2,true)]P_1) && [B]false)))"
             ],
             /*
              * [(!A)* . B]false
@@ -98,7 +99,7 @@ namespace PSM.Common.MuCalc.Tests
                 PhiType.Fix,
                 new FixPoint("X"),
                 new Variable("var", "=", Domain.INT, 1), // var = 1
-                "[true](!(exists s_1:Int . (<var(s_1)>true && s_1 = 1)) -> X)"
+                "(!(exists s_1:Int . (<var(s_1)>true && s_1 = 1)) -> [true]X)"
             ],
             [
                 PhiType.Fix,
@@ -110,13 +111,13 @@ namespace PSM.Common.MuCalc.Tests
                 PhiType.Fix,
                 new FixPoint("X"),
                 new Or(new Command("com"), new Variable("var", "=", Domain.INT, 1)), // CmdChk(com) || var = 1
-                "([true](!(exists s_1:Int . (<var(s_1)>true && s_1 = 1)) -> X) || [!command(com,true)]X)"
+                "([!(false || command(com,true))]X || (!(false || (exists s_1:Int . (<var(s_1)>true && s_1 = 1))) -> [true]X))"
             ],
             [
                 PhiType.Fix,
                 new FixPoint("X"),
                 new And(new Command("com"), new Variable("var", "=", Domain.INT, 1)), // CmdChk(com) || var = 1
-                "[!command(com,true)](!(exists s_1:Int . (<var(s_1)>true && s_1 = 1)) -> X)"
+                "(!(true && (exists s_1:Int . (<var(s_1)>true && s_1 = 1))) -> [!command(com,true)]X)"
             ],
             [
                 PhiType.Fix,
@@ -124,7 +125,7 @@ namespace PSM.Common.MuCalc.Tests
                 new And(
                     new Or(new Command("com1"), new Command("com2")),
                     new Variable("var", "=", Domain.INT, 1)), // (CmdChk(com1) || CmdChk(com2)) && var = 1
-                "[!(command(com1,true) || command(com2,true))](!(exists s_1:Int . (<var(s_1)>true && s_1 = 1)) -> X)"
+                "((false || (!(true && (exists s_1:Int . (<var(s_1)>true && s_1 = 1))) -> [!command(com1,true)]X)) || (!(true && (exists s_1:Int . (<var(s_1)>true && s_1 = 1))) -> [!command(com2,true)]X))"
             ],
         ];
         #endregion
@@ -156,28 +157,28 @@ namespace PSM.Common.MuCalc.Tests
                 new Box(new RegularFormula.ActionFormula(new ActionFormula.ActionFormula(new Action("command", ["A", "true"]))), Bool.False),
                 new Command("A"),
                 new Command("B"),
-                "[!(command(A,true) || command(B,true))*][command(A,true)]false"
+                "[!((false || command(A,true)) || command(B,true))*][command(A,true)]false"
             ],
             [
                 PhiType.Neg,
-                new Box(new RegularFormula.ActionFormula(new ActionFormula.ActionFormula(new Action("command", ["A", "true"]))), Bool.False),
+                new Box(new RegularFormula.ActionFormula(new ActionFormula.ActionFormula(new Action("command", ["B", "true"]))), Bool.False),
                 new Command("A"),
                 new Variable("var", "=", Domain.INT, 1),
-                "([true*]((exists s_1:Int . (<var(s_1)>true && s_1 = 1)) -> [command(A,true)]false) || [!command(A,true)*][command(A,true)]false)"
+                "([!(false || command(A,true))*][command(B,true)]false || nu P_1 . ((!(false || (exists s_1:Int . (<var(s_1)>true && s_1 = 1))) -> [true]P_1) && [command(B,true)]false)))"
             ],
             [
                 PhiType.Neg,
-                new Box(new RegularFormula.ActionFormula(new ActionFormula.ActionFormula(new Action("command", ["A", "true"]))), Bool.False),
+                new Box(new RegularFormula.ActionFormula(new ActionFormula.ActionFormula(new Action("command", ["C", "true"]))), Bool.False),
                 new Or(new Command("A"), new Command("B")),
                 new Variable("var", "=", Domain.INT, 1),
-                "([true*]((exists s_1:Int . (<var(s_1)>true && s_1 = 1)) -> [command(A,true)]false) || [!(command(A,true) || command(B,true))*][command(A,true)]false)"
+                "(nu P_1 . ((!(false || (exists s_1:Int . (<var(s_1)>true && s_1 = 1))) -> [true]P_1) && [command(C,true)]false)) || (false || [!((false || command(A,true)) || command(B,true))*][command(C,true)]false))"
             ],
             [
                 PhiType.Neg,
-                new Box(new RegularFormula.ActionFormula(new ActionFormula.ActionFormula(new Action("command", ["A", "true"]))), Bool.False),
+                new Box(new RegularFormula.ActionFormula(new ActionFormula.ActionFormula(new Action("command", ["D", "true"]))), Bool.False),
                 new Or(new Command("A"), new Command("B")),
                 new And(new Command("C"), new Variable("var", "=", Domain.INT, 1)),
-                "([!(command(A,true) || command(B,true))*][command(A,true)]false || [!command(C,true)*]((exists s_1:Int . (<var(s_1)>true && s_1 = 1)) -> [command(A,true)]false))"
+                "((false || [!((false || command(A,true)) || command(B,true))*][command(D,true)]false) || nu P_1 . ((!(true && (exists s_1:Int . (<var(s_1)>true && s_1 = 1))) -> [!command(C,true)]P_1) && [command(D,true)]false)))"
             ],
             /*
              * [!(A || B)]X
@@ -187,28 +188,28 @@ namespace PSM.Common.MuCalc.Tests
                 new FixPoint("X"),
                 new Command("A"),
                 new Command("B"),
-                "[!(command(A,true) || command(B,true))]X"
+                "[!((false || command(A,true)) || command(B,true))]X"
             ],
             [
                 PhiType.Fix,
                 new FixPoint("X"),
                 new Command("A"),
                 new Variable("var", "=", Domain.INT, 1),
-                "([true](!(exists s_1:Int . (<var(s_1)>true && s_1 = 1)) -> X) || [!command(A,true)]X)"
+                "([!(false || command(A,true))]X || (!(false || (exists s_1:Int . (<var(s_1)>true && s_1 = 1))) -> [true]X))"
             ],
             [
                 PhiType.Fix,
                 new FixPoint("X"),
                 new Or(new Command("A"), new Command("B")),
                 new Variable("var", "=", Domain.INT, 1),
-                "([true](!(exists s_1:Int . (<var(s_1)>true && s_1 = 1)) -> X) || [!(command(A,true) || command(B,true))]X)"
+                "((!(false || (exists s_1:Int . (<var(s_1)>true && s_1 = 1))) -> [true]X) || (false || [!((false || command(A,true)) || command(B,true))]X))"
             ],
             [
                 PhiType.Fix,
                 new FixPoint("X"),
                 new Or(new Command("A"), new Command("B")),
                 new And(new Command("C"), new Variable("var", "=", Domain.INT, 1)),
-                "([!(command(A,true) || command(B,true))]X || [!command(C,true)](!(exists s_1:Int . (<var(s_1)>true && s_1 = 1)) -> X))"
+                "((false || [!((false || command(A,true)) || command(B,true))]X) || (!(true && (exists s_1:Int . (<var(s_1)>true && s_1 = 1))) -> [!command(C,true)]X))"
             ],
         ];
         #endregion
@@ -228,6 +229,102 @@ namespace PSM.Common.MuCalc.Tests
             var formula = phi.ToMuCalc(substitutions);
                 
             Assert.AreEqual(expectedMCRL2, formula.ToMCRL2(substitutions));
+        }
+
+        public static IEnumerable<object[]> ParseCommandTestData { get; } =
+        [
+            [PhiType.Pos, "[command(a,true)]false", false],
+            [PhiType.Pos, "[!command(a,true)]false", true],
+            [PhiType.Neg, "[!command(a,true)*]false", false],
+            [PhiType.Neg, "[!!command(a,true)*]false", true],
+            [PhiType.Fix, "[!command(a,true)]false", false],
+            [PhiType.Fix, "[!!command(a,true)]false", true]
+        ];
+        
+        [TestMethod]
+        [DynamicData(nameof(ParseCommandTestData))]
+        public void ParseCommandTest(PhiType type, string expectedFormula, bool negated)
+        {
+            var phi = new Phi(type, Event.A, Bool.False);
+
+            var cmd = new Command("a") with { Negated = negated };
+            var formula = phi.ParseCommand(cmd).ToMCRL2(null);
+            
+            Assert.AreEqual(expectedFormula, formula);
+        }
+        
+        public static IEnumerable<object[]> ParseVariableTestData { get; } =
+        [
+            [PhiType.Pos, "((exists s_1:Int . (<v(s_1)>true && s_1 = 1)) -> [true]false)"],
+            [PhiType.Neg, "nu P_1 . ((!(exists s_1:Int . (<v(s_1)>true && s_1 = 1)) -> [true]P_1) && false))"],
+            [PhiType.Fix, "(!(exists s_1:Int . (<v(s_1)>true && s_1 = 1)) -> [true]false)"]
+        ];
+        
+        [TestMethod]
+        [DynamicData(nameof(ParseVariableTestData))]
+        public void ParseVariableTest(PhiType type, string expectedFormula)
+        {
+            var phi = new Phi(type, Event.A, Bool.False);
+
+            var variable = new Variable("v", "=", Domain.INT, 1);
+            var formula = phi.ParseVariable(variable).ToMCRL2(null);
+            
+            Assert.AreEqual(expectedFormula, formula);
+        }
+        
+        public static IEnumerable<object[]> ParseOrTestData { get; } =
+        [
+            [
+                PhiType.Pos, 
+                new Or(new Variable("v", "=", Domain.INT, 1), new Variable("w", "=", Domain.INT, 1)),
+                "(((false || (exists s_1:Int . (<v(s_1)>true && s_1 = 1))) || (exists s_1:Int . (<w(s_1)>true && s_1 = 1))) -> [true]false)"
+            ],
+            [
+                PhiType.Pos, 
+                new Or(new Command("a"), new Variable("w", "=", Domain.INT, 1)),
+                "([(false || command(a,true))]false || ((false || (exists s_1:Int . (<w(s_1)>true && s_1 = 1))) -> [true]false))"
+            ],
+            [
+                PhiType.Pos, 
+                new Or(new Command("a"), new Command("b")),
+                "[((false || command(a,true)) || command(b,true))]false"
+            ],
+        ];
+        
+        [TestMethod]
+        [DynamicData(nameof(ParseOrTestData))]
+        public void ParseOrTest(PhiType type, Or expression, string expectedFormula)
+        {
+            var phi = new Phi(type, Event.A, Bool.False);
+            
+            var formula = phi.ParseOr(expression).ToMCRL2(null);
+            
+            Assert.AreEqual(expectedFormula, formula);
+        }
+        
+        public static IEnumerable<object[]> ParseAndTestData { get; } =
+        [
+            [
+                PhiType.Pos, 
+                new And(new Variable("v", "=", Domain.INT, 1), new Variable("w", "=", Domain.INT, 1)),
+                "(((true && (exists s_1:Int . (<v(s_1)>true && s_1 = 1))) && (exists s_1:Int . (<w(s_1)>true && s_1 = 1))) -> [true]false)"
+            ],
+            [
+                PhiType.Pos, 
+                new And(new Command("a"), new Variable("w", "=", Domain.INT, 1)),
+                "((true && (exists s_1:Int . (<w(s_1)>true && s_1 = 1))) -> [command(a,true)]false)"
+            ],
+        ];
+        
+        [TestMethod]
+        [DynamicData(nameof(ParseAndTestData))]
+        public void ParseAndTest(PhiType type, And expression, string expectedFormula)
+        {
+            var phi = new Phi(type, Event.A, Bool.False);
+            
+            var formula = phi.ParseAnd(expression).ToMCRL2(null);
+            
+            Assert.AreEqual(expectedFormula, formula);
         }
     }
 }

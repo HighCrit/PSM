@@ -14,6 +14,7 @@ using PSM.Common.MuCalc.ModalFormula.Operators;
 using PSM.Common.MuCalc.RegularFormula;
 using PSM.Common.MuCalc.RegularFormula.Operators;
 using Action = PSM.Common.MuCalc.Actions.Action;
+using ArgumentException = System.ArgumentException;
 
 namespace PSM.Common.MuCalc.Dissections;
 
@@ -60,130 +61,160 @@ public class Phi(PhiType type, Event ev, IModalFormula sig) : IModalFormula
         throw new ArgumentException($"Expected 1 or 2 expressions, got {expressions.Count}");
     }
 
-    public IModalFormula ParseExpression(IExpression expression, IActionFormula? commands = null)
+    public IModalFormula ParseExpression(IExpression expression)
     {
         return expression switch
         {
-            And and => this.ParseAnd(and, commands),
-            Or or => this.ParseOr(or, commands),
-            Variable v => this.ParseVariable(v, commands),
+            And and => this.ParseAnd(and),
+            Or or => this.ParseOr(or),
+            Neg neg => this.ParseNeg(neg),
+            Variable v => this.ParseVariable(v),
             Command c => this.ParseCommand(c),
             _ => throw new ArgumentException(null, nameof(expression))
         };
     }
     
-    public IModalFormula ParseAnd(And and, IActionFormula? commands)
+    public IModalFormula ParseAnd(And and)
     {
-        // All sub nodes are connected by And, therefore we can simplify
-        if (!and.ContainsOr())
-        {
-            var variables = this.GetConjunctionOfVariables(and)!;
-            var com = this.GetUnionOfCommands(and);
-
-            return this.GetVarForType(variables, com, this.Sigma);
-        }
-
-        if (!and.Left.ContainsVariables())
-        {
-            var com = this.GetUnionOfCommands(and.Left);
-            return this.ParseExpression(and.Right, com);
-        }
-        else if (!and.Right.ContainsVariables())
-        {
-            var com = this.GetUnionOfCommands(and.Right);
-            return this.ParseExpression(and.Left, com);
-        }
+        // Push negations inwards
+        var expressions = and.Expressions.Select(this.PushNegationInwards).ToList();
         
         // Distribute AND over OR.
-        if (and.Left is Or orLeft)
+        if (expressions.Any(e => e is Or))
         {
+            var or = expressions.OfType<Or>().First();
+            var otherExps = expressions.Where(e => !e.Equals(or));
+
             return this.ParseExpression(new Or(
-                new And(orLeft.Left, and.Right),
-                new And(orLeft.Right, and.Right)));
-        }
-        else if (and.Right is Or orRight)
-        {
-            return this.ParseExpression(new Or(
-                new And(orRight.Left, and.Left),
-                new And(orRight.Right, and.Left)));
+                    or.Expressions.Select(e => new And([..otherExps, e]))
+                ));
         }
 
-        return new Conjunction(this.ParseExpression(and.Left), this.ParseExpression(and.Right));
+        // Collapse ANDs
+        if (expressions.Any(e => e is And))
+        {
+            var innerAnds = expressions.OfType<And>();
+            var otherExps = expressions.Where(e => !innerAnds.Any(i => i.Equals(e)));
+
+            var newExps = innerAnds.SelectMany(a => a.Expressions).Concat(otherExps).ToList();
+            return this.ParseExpression(new And([..newExps]));
+        }
+
+        // Command
+        IActionFormula commandAf = new ActionFormula.ActionFormula(Action.True);
+        if (expressions.OfType<Command>().Any())
+        {
+            // TODO: Support multiple commands in AND (is possible due to negation)
+            commandAf = this.SingleCom(expressions.OfType<Command>().Single());
+        }
+        
+        // Variable
+        var variables = expressions.Where(e => e is Variable or Neg);
+        var variableMf = variables.Aggregate((IModalFormula)Bool.True, (mf, v) =>
+        {
+            if (v is Neg neg) return new Conjunction(mf, new Negation(this.SingleVar((Variable)neg.Expression)));
+            return new Conjunction(mf, this.SingleVar((Variable)v));
+        });
+
+        return this.GetVarForType(variableMf, commandAf);
     }
 
-    public IModalFormula ParseOr(Or or, IActionFormula? commands)
+    public IModalFormula ParseOr(Or or)
     {
-        // All sub nodes are connected by Or, therefore we can simplify
-        if (!or.ContainsAnd())
+        var expressions = or.Expressions.Select(this.PushNegationInwards).ToList();
+        
+        IModalFormula? finalMf = null;
+        
+        var commands = expressions.OfType<Command>().ToList();
+        if (commands.Any())
         {
-            var variables = this.GetDisjunctionOfVariables(or);
-            var com = this.GetUnionOfCommands(or);
-
-            IModalFormula? varPart = null;
-            if (variables is not null)
+            var commandAf = commands.Aggregate((IActionFormula)new ActionFormula.ActionFormula(Action.False), (af, c) =>
             {
-                // commands is only non-null if this side of AND is variable
-                varPart = this.GetVarForType(variables, commands, this.Sigma);
-            }
+                var cmd = this.SingleCom(c);
+                return new Union(af, cmd);
+            });
 
-            IModalFormula? comPart = null;
-            if (com is not null)
+            finalMf = this.GetComBoxForType(commandAf, this.Sigma);
+        }
+        
+        var variables = expressions.Where(e => e is Variable or Neg).ToList();
+        if (variables.Any())
+        {
+            var variableMf = variables.Aggregate((IModalFormula)Bool.False, (mf, v) =>
             {
-                comPart = this.GetComBoxForType(com, this.Sigma);
-            }
-
-            if (varPart is null)
-            {
-                return comPart!;
-            }
-            else if (comPart is null)
-            {
-                return varPart!;
-            }
-
-            return new Disjunction(varPart, comPart);
+                if (v is Neg neg) return new Disjunction(mf, new Negation(this.SingleVar((Variable)neg.Expression)));
+                return new Disjunction(mf, this.SingleVar((Variable)v));
+            });
+            
+            finalMf = finalMf is null ? this.GetVarForType(variableMf, null) : new Disjunction(finalMf, this.GetVarForType(variableMf, null));
         }
 
-        return new Disjunction(this.ParseExpression(or.Left), this.ParseExpression(or.Right));
+        var otherExp = expressions.Where(e => e is And or Or).ToList();
+        if (otherExp.Any())
+        {
+            var otherMf = otherExp.Aggregate((IModalFormula)Bool.False,
+                (mf, e) => new Disjunction(mf, this.ParseExpression(e)));
+            
+            finalMf = finalMf is null ? otherMf : new Disjunction(finalMf, otherMf);
+        }
+
+        return finalMf!;
     }
 
-    public IModalFormula ParseCommand(Command? command)
+    public IModalFormula ParseNeg(Neg neg)
     {
-        IActionFormula af;
-        if (command is not null)
+        return neg.Expression switch
         {
-            af = this.SingleCom(command);
-            if (type is PhiType.Neg or PhiType.Fix)
-            {
-                af = new Complement(af);
-            }
-        }
-        else
-        {
-            af = new ActionFormula.ActionFormula(Action.True);
-        }
+            Variable var => new Negation(this.ParseExpression(var)),
+            _ => this.ParseExpression(this.PushNegationInwards(neg))
+        };
+    }
 
+    public IModalFormula ParseCommand(Command command)
+    {
+        var af = this.SingleCom(command);
+        if (command.Negated)
+        {
+            af = new Complement(af);
+        }
+        
         return this.Type switch
         {
             PhiType.Pos => new Box(new RegularFormula.ActionFormula(af), this.Sigma),
-            PhiType.Neg => new Box(new Kleene(new RegularFormula.ActionFormula(af)), this.Sigma),
-            PhiType.Fix => new Box(new RegularFormula.ActionFormula(af), this.Sigma),
+            PhiType.Neg => new Box(new Kleene(new RegularFormula.ActionFormula(new Complement(af))), this.Sigma),
+            PhiType.Fix => new Box(new RegularFormula.ActionFormula(new Complement(af)), this.Sigma),
             _ => throw new ArgumentException($"Invalid Phi type '{this.Type}'")
         };
     }
 
-    public IModalFormula ParseVariable(Variable variable, IActionFormula? commands) =>
-        this.GetVarForType(this.SingleVar(variable), commands, this.Sigma);
+    public IModalFormula ParseVariable(Variable variable) =>
+        this.GetVarForType(this.SingleVar(variable), new ActionFormula.ActionFormula(Action.True));
 
-    private IModalFormula GetComBoxForType(IActionFormula af, IModalFormula sigma)
+    private IExpression PushNegationInwards(IExpression exp)
     {
+        if (exp is not Neg neg) return exp;
+        
+        return neg.Expression switch
+        {
+            And and => new Or(and.Expressions.Select(e => new Neg(e))),
+            Or or => new And(or.Expressions.Select(e => new Neg(e))),
+            Neg innerNeg => innerNeg.Expression,
+            Command cmd => cmd with { Negated = !cmd.Negated },
+            Variable => neg, // Neg cannot be pushed into variables
+            _ => throw new ArgumentException(null, nameof(neg.Expression))
+        };
+    }
+    
+    private IModalFormula GetComBoxForType(IActionFormula af, IModalFormula sigma, PhiType? type = null)
+    {
+        type ??= this.Type;
         // Only negate the af if type is neg or fix and it is not true.
-        if (this.Type is PhiType.Neg or PhiType.Fix && !af.Equals(new ActionFormula.ActionFormula(Action.True)))
+        if (type is PhiType.Neg or PhiType.Fix && !af.Equals(new ActionFormula.ActionFormula(Action.True)))
         {
             af = new Complement(af);
         }
 
-        return this.Type switch
+        return type switch
         {
             PhiType.Pos => new Box(new RegularFormula.ActionFormula(af), sigma),
             PhiType.Neg => new Box(new Kleene(new RegularFormula.ActionFormula(af)), sigma),
@@ -192,78 +223,20 @@ public class Phi(PhiType type, Event ev, IModalFormula sig) : IModalFormula
         };
     }
 
-    private IModalFormula GetVarForType(IModalFormula variables, IActionFormula? commands, IModalFormula sigma)
+    private IModalFormula GetVarForType(IModalFormula variables, IActionFormula? commands)
     {
+        commands ??= new ActionFormula.ActionFormula(Action.True);
+
         return this.Type switch
         {
-            PhiType.Pos => new Implication(
-                variables,
-                this.GetComBoxForType(commands ?? new ActionFormula.ActionFormula(Action.True), sigma)),
-            PhiType.Neg => this.GetComBoxForType(
-                commands ?? new ActionFormula.ActionFormula(Action.True),
-                new Implication(variables, sigma)),
-            PhiType.Fix => this.GetComBoxForType(
-                commands ?? new ActionFormula.ActionFormula(Action.True),
-                new Implication(new Negation(variables), sigma)),
+            PhiType.Pos => new Implication(variables, this.GetComBoxForType(commands, this.Sigma)),
+            PhiType.Neg => new NuFixPoint("P_1",
+                new Conjunction(
+                    new Implication(new Negation(variables),
+                        this.GetComBoxForType(commands, new FixPoint("P_1"), PhiType.Fix)), this.Sigma)),
+            PhiType.Fix => new Implication(new Negation(variables), this.GetComBoxForType(commands, this.Sigma)),
             _ => throw new ArgumentException()
         };
-    }
-
-    private IModalFormula? GetConjunctionOfVariables(IExpression expression)
-    {
-        using var variables = expression.GetVariablesInSubTree().GetEnumerator();
-        if (!variables.MoveNext())
-        {
-            return null;
-        }
-
-        IModalFormula formula = this.SingleVar(variables.Current);
-        while (variables.MoveNext())
-        {
-            formula = new Conjunction(
-                formula,
-                this.SingleVar(variables.Current));
-        }
-
-        return formula;
-    }
-
-    private IModalFormula? GetDisjunctionOfVariables(IExpression expression)
-    {
-        using var variables = expression.GetVariablesInSubTree().GetEnumerator();
-        if (!variables.MoveNext())
-        {
-            return null;
-        }
-
-        IModalFormula formula = this.SingleVar(variables.Current);
-        while (variables.MoveNext())
-        {
-            formula = new Disjunction(
-                formula,
-                this.SingleVar(variables.Current));
-        }
-
-        return formula;
-    }
-
-    private IActionFormula? GetUnionOfCommands(IExpression expression)
-    {
-        using var commands = expression.GetCommandsInSubTree().GetEnumerator();
-        if (!commands.MoveNext())
-        {
-            return null;
-        }
-
-        IActionFormula formula = new ActionFormula.ActionFormula(new Action("command", [commands.Current.Name, "true"]));
-        while (commands.MoveNext())
-        {
-            formula = new Union(
-                formula,
-                new ActionFormula.ActionFormula(new Action("command", [commands.Current.Name, "true"])));
-        }
-
-        return formula;
     }
 
     private IModalFormula SingleVar(Variable var)

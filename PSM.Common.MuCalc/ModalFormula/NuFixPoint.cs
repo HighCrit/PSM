@@ -35,7 +35,7 @@ public class NuFixPoint : IModalFormula
     public string ToLatex(Dictionary<Event, IExpression> substitutions)
     {
         return this.Parameters is null
-            ? $"\\nu {this.Id} . {this.Formula})"
+            ? $"\\nu {this.Id} . {this.Formula.ToLatex(substitutions)})"
             : $"\\nu {this.Id} ({string.Join(',', this.Parameters)}) . {this.Formula.ToLatex(substitutions)})";
     }
 
@@ -43,7 +43,7 @@ public class NuFixPoint : IModalFormula
     public string ToMCRL2(Dictionary<Event, IExpression>? substitutions)
     {
         return this.Parameters is null
-            ? $"nu {this.Id} . {this.Formula})"
+            ? $"nu {this.Id} . {this.Formula.ToMCRL2(substitutions)})"
             : $"nu {this.Id} ({string.Join(',', this.Parameters)}) . {this.Formula.ToMCRL2(substitutions)})";
     }
 }
