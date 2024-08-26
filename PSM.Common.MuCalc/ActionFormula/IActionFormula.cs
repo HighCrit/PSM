@@ -10,6 +10,8 @@ namespace PSM.Common.MuCalc.ActionFormula;
 /// </summary>
 public interface IActionFormula : IMuCalc
 {
+    public IActionFormula Flatten();
+
     /// <summary>
     /// Converts the mu-calculus formula to a string for pretty LaTeX markup.
     /// </summary>

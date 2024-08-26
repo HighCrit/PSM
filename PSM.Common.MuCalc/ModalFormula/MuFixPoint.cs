@@ -31,6 +31,11 @@ public class MuFixPoint : IModalFormula
 
     public IList<Parameter>? Parameters { get; }
 
+    public IModalFormula Flatten()
+    {
+        return new MuFixPoint(this.Id, this.Formula.Flatten(), this.Parameters);
+    }
+
     public string ToLatex(Dictionary<Event, IExpression> substitutions)
     {
         return this.Parameters is null

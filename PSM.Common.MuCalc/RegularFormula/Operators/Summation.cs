@@ -12,13 +12,29 @@ namespace PSM.Common.MuCalc.RegularFormula.Operators;
 /// <param name="right">The right regular formula.</param>
 public class Summation(IRegularFormula left, IRegularFormula right) : IRegularFormula
 {
+    private IRegularFormula Left { get; } = left;
+
+    private IRegularFormula Right { get; } = right;
+    public IRegularFormula Flatten()
+    {
+        var left = this.Left.Flatten();
+        var right = this.Right.Flatten();
+
+        if (left.Equals(right))
+        {
+            return left;
+        }
+
+        return new Summation(left, right);
+    }
+
     public string ToLatex()
     {
-        return $"{left.ToLatex()} + {right.ToLatex()}";
+        return $"{this.Left.ToLatex()} + {this.Right.ToLatex()}";
     }
 
     public string ToMCRL2()
     {
-        return $"{left.ToMCRL2()} + {right.ToMCRL2()}";
+        return $"{this.Left.ToMCRL2()} + {this.Right.ToMCRL2()}";
     }
 }

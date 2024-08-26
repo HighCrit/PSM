@@ -15,7 +15,14 @@ public class ActionFormula(IActionFormula formula) : IRegularFormula
 {
     private IActionFormula Formula { get; } = formula;
 
+    public IRegularFormula Flatten() => new ActionFormula(this.Formula.Flatten());
+
     public string ToLatex() => this.Formula.ToLatex();
 
     public string ToMCRL2() => this.Formula.ToMCRL2();
+
+    public override bool Equals(object? obj)
+    {
+        return obj is ActionFormula af && this.Formula.Equals(af.Formula);
+    }
 }

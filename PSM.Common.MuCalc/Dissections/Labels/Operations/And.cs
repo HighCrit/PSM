@@ -15,12 +15,17 @@ public class And : IExpression
         if (this.Expressions .Count() < 2)
             throw new ArgumentException("There must be at least 2 expressions.");
         if (this.Expressions.Count(e => e.GetCommandsInSubTree().Any()) > 1)
-            throw new ArgumentException("Could not infer meaning from conjunction over two positive occurence of CmdChk.");
+            Console.WriteLine("Could not infer meaning from conjunction over two positive occurence of CmdChk.");
     }
 
     public IEnumerable<Command> GetCommandsInSubTree()
     {
         return this.Expressions.SelectMany(e => e.GetCommandsInSubTree());
+    }
+
+    public IEnumerable<IExpression> GetVariablesInSubTree()
+    {
+        return this.Expressions.SelectMany(e => e.GetVariablesInSubTree());
     }
 
     public string ToLatex()

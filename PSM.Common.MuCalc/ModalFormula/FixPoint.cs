@@ -21,6 +21,11 @@ public class FixPoint(string id, IEnumerable<object>? values = null) : IModalFor
 
     public IList<object>? Values { get; } = values?.ToList();
 
+    public IModalFormula Flatten()
+    {
+        return this;
+    }
+
     /// <inheritdoc />
     public string ToLatex(Dictionary<Event, IExpression> substitutions)
     {

@@ -16,6 +16,10 @@ public class Bool : IModalFormula, IRegularFormula
         this.value = value;
     }
 
+    public IModalFormula Flatten() => this;
+
+    IRegularFormula IRegularFormula.Flatten() => this;
+
     /// <inheritdoc />
     public string ToLatex(Dictionary<Event, IExpression> substitutions) => this.ToLatex();
 

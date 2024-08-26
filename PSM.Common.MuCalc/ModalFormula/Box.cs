@@ -3,6 +3,9 @@
 // See LICENSE for full license details.
 // </copyright>
 
+using PSM.Common.MuCalc.Common;
+using Action = PSM.Common.MuCalc.Actions.Action;
+
 namespace PSM.Common.MuCalc.ModalFormula;
 
 using PSM.Common.MuCalc.Dissections.Labels;
@@ -18,6 +21,18 @@ public class Box(IRegularFormula innerFormula, IModalFormula formula) : IModalFo
     public IRegularFormula InnerFormula { get; } = innerFormula;
 
     public IModalFormula Formula { get; } = formula;
+
+    public IModalFormula Flatten()
+    {
+        var innerFormula = this.InnerFormula.Flatten();
+
+        if (innerFormula.Equals(new ActionFormula(new MuCalc.ActionFormula.ActionFormula(Action.False))))
+        {
+            return Bool.True;
+        }
+
+        return new Box(innerFormula, this.Formula.Flatten());
+    }
 
     /// <inheritdoc />
     public string ToLatex(Dictionary<Event, IExpression> substitutions)

@@ -21,6 +21,11 @@ public class Or : IExpression
         return this.Expressions.SelectMany(e => e.GetCommandsInSubTree());
     }
 
+    public IEnumerable<IExpression> GetVariablesInSubTree()
+    {
+        return this.Expressions.SelectMany(e => e.GetVariablesInSubTree());
+    }
+
     public string ToLatex()
     {
         return $"({string.Join(@"\lor", this.Expressions.Select(e => e.ToLatex()))})";

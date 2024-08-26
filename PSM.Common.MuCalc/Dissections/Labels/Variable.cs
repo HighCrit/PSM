@@ -17,6 +17,11 @@ public class Variable(string name, string operand, Domain domain, object value) 
         return [];
     }
 
+    public IEnumerable<IExpression> GetVariablesInSubTree()
+    {
+        return [this];
+    }
+
     public string ToLatex()
     {
         return $@"\exists_{{s_1: {this.Domain}}} . \langle{this.Name}(s_1)\rangle \land s_1 {this.Operand} {this.Value}";

@@ -6,7 +6,17 @@ public class Neg(IExpression exp) : IExpression
 
     public IEnumerable<Command> GetCommandsInSubTree()
     {
-        return this.Expression.GetCommandsInSubTree().Select(c => c with { Negated = !c.Negated });
+        return [];
+    }
+
+    public IEnumerable<IExpression> GetVariablesInSubTree()
+    {
+        if (this.Expression is Variable)
+        {
+            return [this];
+        }
+
+        return [];
     }
 
     public string ToLatex()

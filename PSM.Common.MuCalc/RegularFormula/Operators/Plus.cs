@@ -11,6 +11,8 @@ namespace PSM.Common.MuCalc.RegularFormula.Operators;
 /// <param name="formula">The regular formula.</param>
 public class Plus(IRegularFormula formula) : IRegularFormula
 {
+    public IRegularFormula Flatten() => new Plus(formula.Flatten());
+
     public string ToLatex()
     {
         return $"{formula}^+";

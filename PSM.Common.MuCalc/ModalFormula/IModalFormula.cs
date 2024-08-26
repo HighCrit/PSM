@@ -12,6 +12,8 @@ namespace PSM.Common.MuCalc.ModalFormula;
 /// </summary>
 public interface IModalFormula : IMuCalc
 {
+    public IModalFormula Flatten();
+
     /// <summary>
     /// Converts the mu-calculus formula to a string for pretty LaTeX markup.
     /// </summary>

@@ -1,6 +1,6 @@
 ﻿namespace PSM.Common.MuCalc.Dissections.Labels;
 
-public readonly struct Command(string name) : IExpression
+public class Command(string name) : IExpression
 {
     public string Name { get; } = name;
 
@@ -9,6 +9,11 @@ public readonly struct Command(string name) : IExpression
     public IEnumerable<Command> GetCommandsInSubTree()
     {
         return [this];
+    }
+
+    public IEnumerable<IExpression> GetVariablesInSubTree()
+    {
+        return [];
     }
 
     public string ToLatex()

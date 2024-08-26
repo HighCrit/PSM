@@ -7,6 +7,8 @@ public class BooleanExp(string value) : IModalFormula
 {
     public string Value { get; } = value;
 
+    public IModalFormula Flatten() => this;
+
     public virtual string ToLatex(Dictionary<Event, IExpression> substitutions)
     {
         // TODO: Make value an expression instead of string.

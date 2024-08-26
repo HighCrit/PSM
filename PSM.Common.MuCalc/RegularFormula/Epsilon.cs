@@ -13,6 +13,8 @@ public class Epsilon : IRegularFormula
     {
     }
 
+    public IRegularFormula Flatten() => this;
+
     public string ToLatex()
     {
         return "ε";

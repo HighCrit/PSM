@@ -3,6 +3,8 @@
 // See LICENSE for full license details.
 // </copyright>
 
+using Action = PSM.Common.MuCalc.Actions.Action;
+
 namespace PSM.Common.MuCalc.ActionFormula.Operators;
 
 /// <summary>
@@ -15,6 +17,19 @@ public class Intersection(IActionFormula left, IActionFormula right) : IActionFo
     private IActionFormula Left { get; } = left;
 
     private IActionFormula Right { get; } = right;
+
+    public IActionFormula Flatten()
+    {
+        var left = this.Left.Flatten();
+        var right = this.Right.Flatten();
+
+        if (left.Equals(new ActionFormula(Action.False)) || right.Equals(new ActionFormula(Action.False)))
+        {
+            return new ActionFormula(Action.False);
+        }
+
+        return new Intersection(left, right);
+    }
 
     public string ToLatex()
     {

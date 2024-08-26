@@ -3,6 +3,8 @@
 // See LICENSE for full license details.
 // </copyright>
 
+using Action = PSM.Common.MuCalc.Actions.Action;
+
 namespace PSM.Common.MuCalc.ActionFormula.Operators;
 
 /// <summary>
@@ -12,6 +14,22 @@ namespace PSM.Common.MuCalc.ActionFormula.Operators;
 public class Complement(IActionFormula formula) : IActionFormula
 {
     private IActionFormula Formula { get; } = formula;
+
+    public IActionFormula Flatten()
+    {
+        var formula = this.Formula.Flatten();
+
+        if (formula.Equals(new ActionFormula(Action.True)))
+        {
+            return new ActionFormula(Action.False);
+        }
+        if (formula.Equals(new ActionFormula(Action.False)))
+        {
+            return new ActionFormula(Action.True);
+        }
+
+        return new Complement(formula);
+    }
 
     public string ToLatex()
     {

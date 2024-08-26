@@ -8,12 +8,14 @@ namespace PSM.Common.MuCalc.ActionFormula;
 using PSM.Common.MuCalc.Actions;
 
 /// <summary>
-/// Action formual representing a single action.
+/// Action formula representing a single action.
 /// </summary>
 /// <param name="action">The represented action.</param>
 public class ActionFormula(Action action) : IActionFormula
 {
     private Action Action { get; } = action;
+
+    public IActionFormula Flatten() => this;
 
     public string ToLatex()
     {

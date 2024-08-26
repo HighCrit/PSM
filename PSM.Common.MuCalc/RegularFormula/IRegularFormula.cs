@@ -10,6 +10,8 @@ namespace PSM.Common.MuCalc.RegularFormula;
 /// </summary>
 public interface IRegularFormula : IMuCalc
 {
+    public IRegularFormula Flatten();
+
     /// <summary>
     /// Converts the mu-calculus formula to a string for pretty LaTeX markup.
     /// </summary>

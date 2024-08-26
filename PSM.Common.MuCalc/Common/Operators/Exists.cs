@@ -25,6 +25,16 @@ public class Exists<T>(string variableName, Domain domain, T formula) : IModalFo
 
     private T Formula { get; } = formula;
 
+    public IModalFormula Flatten() => new Exists<IModalFormula>(
+        this.VariableName,
+        this.Domain,
+        (this.Formula as IModalFormula)!.Flatten());
+
+    IActionFormula IActionFormula.Flatten() => new Exists<IActionFormula>(
+        this.VariableName,
+        this.Domain,
+        (this.Formula as IActionFormula)!.Flatten());
+
     public string ToLatex(Dictionary<Event, IExpression> substitutions)
     {
         throw new NotImplementedException();

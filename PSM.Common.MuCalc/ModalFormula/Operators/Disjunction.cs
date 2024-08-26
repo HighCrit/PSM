@@ -3,6 +3,7 @@
 // See LICENSE for full license details.
 // </copyright>
 
+using PSM.Common.MuCalc.Common;
 using PSM.Common.MuCalc.Dissections.Labels;
 
 namespace PSM.Common.MuCalc.ModalFormula.Operators;
@@ -17,6 +18,31 @@ public class Disjunction(IModalFormula left, IModalFormula right) : IModalFormul
     public IModalFormula Left { get; } = left;
 
     public IModalFormula Right { get; } = right;
+
+    public IModalFormula Flatten()
+    {
+        var left = this.Left.Flatten();
+        var right = this.Right.Flatten();
+
+        if (left.Equals(Bool.True) || right.Equals(Bool.True))
+        {
+            return Bool.True;
+        }
+        if (left.Equals(Bool.False))
+        {
+            return right;
+        }
+        if (right.Equals(Bool.False))
+        {
+            return left;
+        }
+        if (left.Equals(right))
+        {
+            return left;
+        }
+
+        return new Disjunction(left, right);
+    }
 
     public string ToLatex(Dictionary<Event, IExpression> substitutions)
     {

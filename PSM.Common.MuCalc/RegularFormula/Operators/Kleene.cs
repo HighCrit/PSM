@@ -12,7 +12,9 @@ namespace PSM.Common.MuCalc.RegularFormula.Operators;
 public class Kleene(IRegularFormula formula) : IRegularFormula
 {
     private IRegularFormula Formula { get; } = formula;
-    
+
+    public IRegularFormula Flatten() => new Kleene(this.Formula.Flatten());
+
     public string ToLatex()
     {
         return $"{Formula.ToLatex()}^*";

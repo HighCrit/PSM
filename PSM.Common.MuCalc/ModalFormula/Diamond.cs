@@ -19,6 +19,11 @@ public class Diamond(IRegularFormula innerFormula, IModalFormula formula) : IMod
 
     public IModalFormula Formula { get; } = formula;
 
+    public IModalFormula Flatten()
+    {
+        return new Diamond(this.InnerFormula.Flatten(), this.Formula.Flatten());
+    }
+
     /// <inheritdoc />
     public string ToLatex(Dictionary<Event, IExpression> substitutions)
     {

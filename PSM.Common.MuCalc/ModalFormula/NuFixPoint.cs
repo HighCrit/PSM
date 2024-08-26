@@ -31,6 +31,11 @@ public class NuFixPoint : IModalFormula
 
     public IList<Parameter>? Parameters { get; }
 
+    public IModalFormula Flatten()
+    {
+        return new NuFixPoint(this.Id, this.Formula.Flatten(), this.Parameters);
+    }
+
     /// <inheritdoc />
     public string ToLatex(Dictionary<Event, IExpression> substitutions)
     {

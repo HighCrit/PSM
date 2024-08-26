@@ -3,6 +3,7 @@
 // See LICENSE for full license details.
 // </copyright>
 
+using PSM.Common.MuCalc.Common;
 using PSM.Common.MuCalc.Dissections.Labels;
 
 namespace PSM.Common.MuCalc.ModalFormula.Operators;
@@ -14,6 +15,26 @@ namespace PSM.Common.MuCalc.ModalFormula.Operators;
 public class Negation(IModalFormula formula) : IModalFormula
 {
     public IModalFormula Formula { get; } = formula;
+
+    public IModalFormula Flatten()
+    {
+        var formula = this.Formula.Flatten();
+
+        if (formula is Negation negation)
+        {
+            return negation.Formula.Flatten();
+        }
+        if (formula.Equals(Bool.True))
+        {
+            return Bool.False;
+        }
+        if (formula.Equals(Bool.False))
+        {
+            return Bool.True;
+        }
+
+        return new Negation(formula);
+    }
 
     public string ToLatex(Dictionary<Event, IExpression> substitutions)
     {
