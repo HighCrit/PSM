@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PSM.Common\PSM.Common.csproj" />
+    <ProjectReference Include="..\PSM.Parsers.Labels\PSM.Parsers.Labels.csproj" />
   </ItemGroup>
 
 </Project>

@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PSM.Parsers.Labels.Grammar"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PSM.Parsers.Labels", "PSM.Parsers.Labels\PSM.Parsers.Labels.csproj", "{BFBD580F-41F8-4947-9015-2FD137630063}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PSM.Parsers.Labels.Tests", "PSM.Parsers.Labels.Tests\PSM.Parsers.Labels.Tests.csproj", "{D096C41B-7FF5-4874-904E-717035EC9B33}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +73,10 @@ Global
 		{BFBD580F-41F8-4947-9015-2FD137630063}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BFBD580F-41F8-4947-9015-2FD137630063}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BFBD580F-41F8-4947-9015-2FD137630063}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D096C41B-7FF5-4874-904E-717035EC9B33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D096C41B-7FF5-4874-904E-717035EC9B33}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D096C41B-7FF5-4874-904E-717035EC9B33}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D096C41B-7FF5-4874-904E-717035EC9B33}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

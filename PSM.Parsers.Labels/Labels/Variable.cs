@@ -1,14 +1,12 @@
-﻿using PSM.Common.MuCalc.Common;
+﻿namespace PSM.Parsers.Labels.Labels;
 
-namespace PSM.Common.MuCalc.Dissections.Labels;
-
-public struct Variable(string name, string operand, Domain domain, object value) : IExpression
+public struct Variable(string name, string operand, string domain, object value) : IExpression
 {
     public string Name { get; } = name;
 
     public string Operand { get; } = operand;
 
-    public Domain Domain { get; } = domain;
+    public string Domain { get; } = domain;
 
     public object Value { get; } = value;
 
@@ -22,11 +20,6 @@ public struct Variable(string name, string operand, Domain domain, object value)
     public IEnumerable<IExpression> GetVariablesInSubTree()
     {
         return [this];
-    }
-
-    public string ToLatex()
-    {
-        return $@"\exists_{{s_1: {this.Domain}}} . \langle{this.Name}(s_1)\rangle \land s_1 {this.Operand} {this.Value}";
     }
 
     public string ToMCRL2()

@@ -23,7 +23,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\PSM.Common.MuCalc\PSM.Common.MuCalc.csproj" />
     <ProjectReference Include="..\PSM.Common\PSM.Common.csproj" />
+    <ProjectReference Include="..\PSM.Constructors.PROPEL2MuCalc\PSM.Constructors.PROPEL2MuCalc.csproj" />
+    <ProjectReference Include="..\PSM.Parsers.Labels\PSM.Parsers.Labels.csproj" />
   </ItemGroup>
 
 </Project>

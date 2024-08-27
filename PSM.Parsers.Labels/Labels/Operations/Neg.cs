@@ -1,4 +1,4 @@
-namespace PSM.Common.MuCalc.Dissections.Labels.Operations;
+namespace PSM.Parsers.Labels.Labels.Operations;
 
 public class Neg(IExpression exp) : IExpression
 {
@@ -19,13 +19,13 @@ public class Neg(IExpression exp) : IExpression
         return [];
     }
 
-    public string ToLatex()
-    {
-        return $@"\neg{this.Expression.ToLatex()}";
-    }
-
     public string ToMCRL2()
     {
         return $"!{this.Expression.ToMCRL2()}";
+    }
+    
+    public override bool Equals(object? obj)
+    {
+        return obj is Neg neg && neg.Expression.Equals(this.Expression);
     }
 }

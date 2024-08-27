@@ -7,11 +7,10 @@ using System.Diagnostics;
 using PSM.Common.MuCalc.ActionFormula;
 using PSM.Common.MuCalc.ActionFormula.Operators;
 using PSM.Common.MuCalc.Common;
-using PSM.Common.MuCalc.Common.Operators;
-using PSM.Common.MuCalc.Dissections.Labels;
-using PSM.Common.MuCalc.Dissections.Labels.Operations;
 using PSM.Common.MuCalc.ModalFormula;
 using PSM.Common.MuCalc.ModalFormula.Operators;
+using PSM.Parsers.Labels.Labels;
+using PSM.Parsers.Labels.Labels.Operations;
 using Action = PSM.Common.MuCalc.Actions.Action;
 using ArgumentException = System.ArgumentException;
 

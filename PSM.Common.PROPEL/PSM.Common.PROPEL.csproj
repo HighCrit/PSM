@@ -10,4 +10,8 @@
     <AdditionalFiles Include="..\stylecop.json" Link="stylecop.json" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\PSM.Common\PSM.Common.csproj" />
+  </ItemGroup>
+
 </Project>

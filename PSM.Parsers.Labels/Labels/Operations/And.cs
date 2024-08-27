@@ -1,4 +1,6 @@
-﻿namespace PSM.Common.MuCalc.Dissections.Labels.Operations;
+﻿using Microsoft.VisualBasic;
+
+namespace PSM.Parsers.Labels.Labels.Operations;
 
 public class And : IExpression
 {
@@ -12,8 +14,6 @@ public class And : IExpression
     {
         this.Expressions = expressions.ToList();
         
-        if (this.Expressions .Count() < 2)
-            throw new ArgumentException("There must be at least 2 expressions.");
         if (this.Expressions.Count(e => e.GetCommandsInSubTree().Any()) > 1)
             Console.WriteLine("Could not infer meaning from conjunction over two positive occurence of CmdChk.");
     }
@@ -28,13 +28,19 @@ public class And : IExpression
         return this.Expressions.SelectMany(e => e.GetVariablesInSubTree());
     }
 
-    public string ToLatex()
-    {
-        return $"({string.Join(@"\land", this.Expressions.Select(e => e.ToLatex()))})";
-    }
-
     public string ToMCRL2()
     {
+        if (this.Expressions.Count == 1)
+        {
+            return this.Expressions[0].ToMCRL2();
+        }
+        
         return $"({string.Join("&&", this.Expressions.Select(e => e.ToMCRL2()))})";
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return (obj is And and && and.Expressions.SequenceEqual(this.Expressions)) || 
+               (this.Expressions.Count == 1 && this.Expressions.First().Equals(obj));
     }
 }

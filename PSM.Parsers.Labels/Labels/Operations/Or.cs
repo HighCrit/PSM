@@ -1,4 +1,4 @@
-﻿namespace PSM.Common.MuCalc.Dissections.Labels.Operations;
+﻿namespace PSM.Parsers.Labels.Labels.Operations;
 
 public class Or : IExpression
 {
@@ -11,9 +11,6 @@ public class Or : IExpression
     public Or(IEnumerable<IExpression> expressions)
     {
         this.Expressions = expressions.ToList();
-        
-        if (this.Expressions.Count() < 2)
-            throw new ArgumentException("There must be at least 2 expressions.");
     }
 
     public IEnumerable<Command> GetCommandsInSubTree()
@@ -26,13 +23,19 @@ public class Or : IExpression
         return this.Expressions.SelectMany(e => e.GetVariablesInSubTree());
     }
 
-    public string ToLatex()
-    {
-        return $"({string.Join(@"\lor", this.Expressions.Select(e => e.ToLatex()))})";
-    }
-
     public string ToMCRL2()
     {
+        if (this.Expressions.Count == 1)
+        {
+            return this.Expressions[0].ToMCRL2();
+        }
+        
         return $"({string.Join("||", this.Expressions.Select(e => e.ToMCRL2()))})";
+    }
+    
+    public override bool Equals(object? obj)
+    {
+        return (obj is Or or && or.Expressions.SequenceEqual(this.Expressions)) || 
+               (this.Expressions.Count == 1 && this.Expressions.First().Equals(obj));
     }
 }

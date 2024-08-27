@@ -1,4 +1,4 @@
-﻿namespace PSM.Common.MuCalc.Dissections.Labels;
+﻿namespace PSM.Parsers.Labels.Labels;
 
 public class Command(string name) : IExpression
 {
@@ -15,15 +15,14 @@ public class Command(string name) : IExpression
     {
         return [];
     }
-
-    public string ToLatex()
-    {
-        var res = $@"\mathit{{CmdChk({this.Name})}}";
-        return this.Negated ? $@"\overline{{{res}}}" : res;
-    }
-
+    
     public string ToMCRL2()
     {
         return $"{(this.Negated ? "!" : string.Empty)}CmdChk({this.Name})";
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is not null && ((obj is Command cmd && cmd.Name == this.Name) || obj.Equals(this));
     }
 }

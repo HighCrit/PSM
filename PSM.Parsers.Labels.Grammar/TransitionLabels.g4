@@ -1,36 +1,28 @@
 grammar TransitionLabels;
 
-// The entry point rule
-expr: orExpr EOF;
-
-// Rule for OR expressions
+label: orExpr EOF;
 orExpr: andExpr (OR andExpr)*;
+andExpr: negExpr (AND negExpr)*;
+negExpr: (NOT negExpr) | val;
 
-// Rule for AND expressions
-andExpr: notExpr (AND notExpr)*;
+val: command | variable | LPAREN orExpr RPAREN;
 
-// Rule for NOT expressions
-notExpr: NOT notExpr         // NOT has the highest precedence
-       | atom;               // Fallback to atom
+variable: IDENTIFIER VARIABLE_OP VARIABLE_VAL;
+command: CMDCHK IDENTIFIER RPAREN;
 
-// Atom rule: a basic unit like a boolean literal or a parenthesized expression
-atom: BOOLEAN
-    | COMMAND
-    | VARIABLE
-    | LPAREN expr RPAREN;
-
-// Lexer rules
-COMMAND : 'CmdChk(' NAME ')';
-VARIABLE : NAME OP (BOOLEAN | NUMBER);
+VARIABLE_VAL: BOOLEAN;
 BOOLEAN: 'true' | 'false';
-NUMBER: [0-9]+;
-OP : '=' | '<' | '>';
-AND: 'AND';
-OR: 'OR';
-NOT: 'NOT';
-NAME : [a-zA-Z]+;
+OR: '||';
+AND: '&&';
+NOT: '!';
+
+VARIABLE_OP: '=';
+
+IDENTIFIER: [A-Za-z0-9_]+;
 LPAREN: '(';
 RPAREN: ')';
+CMDCHK: 'CmdChk(';
+
 
 // Whitespace (skip)
 WS: [ \t\r\n]+ -> skip;

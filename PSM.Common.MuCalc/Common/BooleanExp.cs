@@ -1,5 +1,5 @@
-﻿using PSM.Common.MuCalc.Dissections.Labels;
-using PSM.Common.MuCalc.ModalFormula;
+﻿using PSM.Common.MuCalc.ModalFormula;
+using PSM.Parsers.Labels.Labels;
 
 namespace PSM.Common.MuCalc.Common;
 

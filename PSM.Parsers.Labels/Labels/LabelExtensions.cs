@@ -2,10 +2,9 @@
 // Copyright (c) HighCrit. This file is released under GPLv3.
 // See LICENSE for full license details.
 // </copyright>
+using PSM.Parsers.Labels.Labels.Operations;
 
-using PSM.Common.MuCalc.Dissections.Labels.Operations;
-
-namespace PSM.Common.MuCalc.Dissections.Labels;
+namespace PSM.Parsers.Labels.Labels;
 
 public static class LabelExtensions
 {

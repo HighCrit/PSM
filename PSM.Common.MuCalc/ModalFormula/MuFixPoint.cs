@@ -3,7 +3,7 @@
 // See LICENSE for full license details.
 // </copyright>
 
-using PSM.Common.MuCalc.Dissections.Labels;
+using PSM.Parsers.Labels.Labels;
 
 namespace PSM.Common.MuCalc.ModalFormula;
 

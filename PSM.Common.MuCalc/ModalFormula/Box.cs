@@ -3,13 +3,13 @@
 // See LICENSE for full license details.
 // </copyright>
 
-using PSM.Common.MuCalc.Common;
-using Action = PSM.Common.MuCalc.Actions.Action;
 
 namespace PSM.Common.MuCalc.ModalFormula;
 
-using PSM.Common.MuCalc.Dissections.Labels;
+using PSM.Common.MuCalc.Common;
+using PSM.Parsers.Labels.Labels;
 using PSM.Common.MuCalc.RegularFormula;
+using Action = PSM.Common.MuCalc.Actions.Action;
 
 /// <summary>
 /// The box modality.
