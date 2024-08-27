@@ -9,13 +9,16 @@ public class BooleanExp(string value) : IModalFormula
 
     public IModalFormula Flatten() => this;
 
-    public virtual string ToLatex(Dictionary<Event, IExpression> substitutions)
+    public IModalFormula ApplySubstitutions(Dictionary<Event, IExpression> substitutions)
+        => this;
+
+    public virtual string ToLatex()
     {
         // TODO: Make value an expression instead of string.
         return this.Value;
     }
 
-    public virtual string ToMCRL2(Dictionary<Event, IExpression> substitutions)
+    public virtual string ToMCRL2()
     {
         return this.Value;
     }

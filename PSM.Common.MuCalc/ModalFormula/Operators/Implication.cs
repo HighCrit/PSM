@@ -36,13 +36,18 @@ public class Implication(IModalFormula left, IModalFormula right) : IModalFormul
         return new Implication(left, right);
     }
 
-    public string ToLatex(Dictionary<Event, IExpression> substitutions)
+    public string ToLatex()
     {
-        return $@"({this.Left.ToLatex(substitutions)} \Rightarrow {this.Right.ToLatex(substitutions)})";
+        return $@"({this.Left.ToLatex()} \Rightarrow {this.Right.ToLatex()})";
     }
 
-    public string ToMCRL2(Dictionary<Event, IExpression>? substitutions)
+    public string ToMCRL2()
     {
-        return $"({this.Left.ToMCRL2(substitutions)} -> {this.Right.ToMCRL2(substitutions)})";
+        return $"({this.Left.ToMCRL2()} -> {this.Right.ToMCRL2()})";
+    }
+    
+    public IModalFormula ApplySubstitutions(Dictionary<Event, IExpression> substitutions)
+    {
+        return new Implication(this.Left.ApplySubstitutions(substitutions), this.Right.ApplySubstitutions(substitutions));
     }
 }

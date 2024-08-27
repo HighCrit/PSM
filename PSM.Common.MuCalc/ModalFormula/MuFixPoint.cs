@@ -36,17 +36,22 @@ public class MuFixPoint : IModalFormula
         return new MuFixPoint(this.Id, this.Formula.Flatten(), this.Parameters);
     }
 
-    public string ToLatex(Dictionary<Event, IExpression> substitutions)
+    public string ToLatex()
     {
         return this.Parameters is null
-            ? $"\\mu {this.Id} . {this.Formula.ToLatex(substitutions)})"
-            : $"\\mu {this.Id} ({string.Join(',', this.Parameters)}) . {this.Formula.ToLatex(substitutions)})";
+            ? $"\\mu {this.Id} . {this.Formula.ToLatex()}"
+            : $"\\mu {this.Id} ({string.Join(',', this.Parameters)}) . {this.Formula.ToLatex()}";
     }
 
-    public string ToMCRL2(Dictionary<Event, IExpression>? substitutions)
+    public string ToMCRL2()
     {
         return this.Parameters is null
-            ? $"mu {this.Id} . {this.Formula.ToMCRL2(substitutions)})"
-            : $"mu {this.Id} ({string.Join(',', this.Parameters)}) . {this.Formula.ToMCRL2(substitutions)})";
+            ? $"mu {this.Id} . {this.Formula.ToMCRL2()}"
+            : $"mu {this.Id} ({string.Join(',', this.Parameters)}) . {this.Formula.ToMCRL2()}";
+    }
+    
+    public IModalFormula ApplySubstitutions(Dictionary<Event, IExpression> substitutions)
+    {
+        return new MuFixPoint(this.Id, this.Formula.ApplySubstitutions(substitutions), this.Parameters);
     }
 }

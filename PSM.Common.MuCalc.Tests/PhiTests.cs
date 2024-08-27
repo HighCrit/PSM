@@ -144,7 +144,7 @@ namespace PSM.Common.MuCalc.Tests
                 [Event.A] = expression
             };
 
-            var formula = phi.ToMuCalc(substitutions).Flatten().ToMCRL2(substitutions);
+            var formula = phi.ApplySubstitutions(substitutions).Flatten().ToMCRL2();
 
             Assert.AreEqual(expectedMCRL2, formula);
         }
@@ -232,7 +232,7 @@ namespace PSM.Common.MuCalc.Tests
                 [Event.B] = exp2,
             };
 
-            var formula = phi.ToMuCalc(substitutions).Flatten().ToMCRL2(substitutions);
+            var formula = phi.ApplySubstitutions(substitutions).Flatten().ToMCRL2();
                 
             Assert.AreEqual(expectedMCRL2, formula);
         }
@@ -259,7 +259,7 @@ namespace PSM.Common.MuCalc.Tests
                 [Event.A] = cmd,
             };
 
-            var formula = phi.ToMuCalc(substitutions).Flatten().ToMCRL2(null);
+            var formula = phi.ApplySubstitutions(substitutions).Flatten().ToMCRL2();
 
             Assert.AreEqual(expectedFormula, formula);
         }
@@ -283,7 +283,7 @@ namespace PSM.Common.MuCalc.Tests
                 [Event.A] = variable,
             };
 
-            var formula = phi.ToMuCalc(substitutions).Flatten().ToMCRL2(null);
+            var formula = phi.ApplySubstitutions(substitutions).Flatten().ToMCRL2();
 
             Assert.AreEqual(expectedFormula, formula);
         }
@@ -318,7 +318,7 @@ namespace PSM.Common.MuCalc.Tests
                 [Event.A] = expression,
             };
 
-            var formula = phi.ToMuCalc(substitutions).Flatten().ToMCRL2(null);
+            var formula = phi.ApplySubstitutions(substitutions).Flatten().ToMCRL2();
 
             Assert.AreEqual(expectedFormula, formula);
         }
@@ -348,7 +348,7 @@ namespace PSM.Common.MuCalc.Tests
                 [Event.A] = expression,
             };
 
-            var formula = phi.ToMuCalc(substitutions).Flatten().ToMCRL2(null);
+            var formula = phi.ApplySubstitutions(substitutions).Flatten().ToMCRL2();
             
             Assert.AreEqual(expectedFormula, formula);
         }

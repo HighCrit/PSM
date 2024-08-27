@@ -27,7 +27,7 @@ public class FixPoint(string id, IEnumerable<object>? values = null) : IModalFor
     }
 
     /// <inheritdoc />
-    public string ToLatex(Dictionary<Event, IExpression> substitutions)
+    public string ToLatex()
     {
         return this.Values is null
             ? $"{this.Id}"
@@ -35,10 +35,13 @@ public class FixPoint(string id, IEnumerable<object>? values = null) : IModalFor
     }
 
     /// <inheritdoc />
-    public string ToMCRL2(Dictionary<Event, IExpression>? substitutions)
+    public string ToMCRL2()
     {
         return this.Values is null
             ? $"{this.Id}"
             : $"{this.Id}({string.Join(',', this.Values)})";
     }
+
+    public IModalFormula ApplySubstitutions(Dictionary<Event, IExpression> substitutions)
+        => this;
 }

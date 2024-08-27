@@ -25,6 +25,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PSM.Common.MuCalc.Tests", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PSM.Constructors.PROPEL2MuCalc.Tests", "PSM.Constructors.PROPEL2MuCalc.Tests\PSM.Constructors.PROPEL2MuCalc.Tests.csproj", "{C0393A48-0E7F-4795-9998-C2A3B37B6F3B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PSM.Parsers.Labels.Grammar", "PSM.Parsers.Labels.Grammar\PSM.Parsers.Labels.Grammar.csproj", "{DF28B906-5656-4D9F-8FE5-F31730296876}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PSM.Parsers.Labels", "PSM.Parsers.Labels\PSM.Parsers.Labels.csproj", "{BFBD580F-41F8-4947-9015-2FD137630063}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +63,14 @@ Global
 		{C0393A48-0E7F-4795-9998-C2A3B37B6F3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C0393A48-0E7F-4795-9998-C2A3B37B6F3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C0393A48-0E7F-4795-9998-C2A3B37B6F3B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF28B906-5656-4D9F-8FE5-F31730296876}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF28B906-5656-4D9F-8FE5-F31730296876}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF28B906-5656-4D9F-8FE5-F31730296876}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF28B906-5656-4D9F-8FE5-F31730296876}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BFBD580F-41F8-4947-9015-2FD137630063}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BFBD580F-41F8-4947-9015-2FD137630063}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BFBD580F-41F8-4947-9015-2FD137630063}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BFBD580F-41F8-4947-9015-2FD137630063}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

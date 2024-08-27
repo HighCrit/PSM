@@ -25,14 +25,19 @@ public class Diamond(IRegularFormula innerFormula, IModalFormula formula) : IMod
     }
 
     /// <inheritdoc />
-    public string ToLatex(Dictionary<Event, IExpression> substitutions)
+    public string ToLatex()
     {
-        return $"\\langle{this.InnerFormula.ToLatex()}\\rangle{this.Formula.ToLatex(substitutions)}";
+        return $"\\langle{this.InnerFormula.ToLatex()}\\rangle{this.Formula.ToLatex()}";
     }
 
     /// <inheritdoc />
-    public string ToMCRL2(Dictionary<Event, IExpression>? substitutions)
+    public string ToMCRL2()
     {
-        return $"<{this.InnerFormula.ToMCRL2()}>{this.Formula.ToMCRL2(substitutions)}";
+        return $"<{this.InnerFormula.ToMCRL2()}>{this.Formula.ToMCRL2()}";
+    }
+    
+    public IModalFormula ApplySubstitutions(Dictionary<Event, IExpression> substitutions)
+    {
+        return new Diamond(this.InnerFormula, this.Formula.ApplySubstitutions(substitutions));
     }
 }

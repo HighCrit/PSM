@@ -44,13 +44,18 @@ public class Disjunction(IModalFormula left, IModalFormula right) : IModalFormul
         return new Disjunction(left, right);
     }
 
-    public string ToLatex(Dictionary<Event, IExpression> substitutions)
+    public string ToLatex()
     {
-        return $@"({this.Left.ToLatex(substitutions)} \lor {this.Right.ToLatex(substitutions)})";
+        return $@"({this.Left.ToLatex()} \lor {this.Right.ToLatex()})";
     }
 
-    public string ToMCRL2(Dictionary<Event, IExpression>? substitutions)
+    public string ToMCRL2()
     {
-        return $"({this.Left.ToMCRL2(substitutions)} || {this.Right.ToMCRL2(substitutions)})";
+        return $"({this.Left.ToMCRL2()} || {this.Right.ToMCRL2()})";
+    }
+    
+    public IModalFormula ApplySubstitutions(Dictionary<Event, IExpression> substitutions)
+    {
+        return new Disjunction(this.Left.ApplySubstitutions(substitutions), this.Right.ApplySubstitutions(substitutions));
     }
 }

@@ -27,9 +27,19 @@ public static class LabelExtensions
                 Or or => new And(or.Expressions.Select(e => PushNegationInwards(new Neg(e)))),
                 Neg innerNeg => PushNegationInwards(innerNeg.Expression),
                 Command cmd => throw new ArgumentException("Command may not occur negatively"),
-                Variable => neg, // Neg cannot be pushed into variables
+                Variable v => v with { Negated = !v.Negated },
                 _ => throw new ArgumentException(null, nameof(neg.Expression))
             };
+        }
+
+        if (expression is And and)
+        {
+            return new And(and.Expressions.Select(PushNegationInwards));
+        }
+        
+        if (expression is Or o)
+        {
+            return new Or(o.Expressions.Select(PushNegationInwards));
         }
 
         return expression;

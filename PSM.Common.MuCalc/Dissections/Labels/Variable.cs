@@ -2,7 +2,7 @@
 
 namespace PSM.Common.MuCalc.Dissections.Labels;
 
-public class Variable(string name, string operand, Domain domain, object value) : IExpression
+public struct Variable(string name, string operand, Domain domain, object value) : IExpression
 {
     public string Name { get; } = name;
 
@@ -11,6 +11,8 @@ public class Variable(string name, string operand, Domain domain, object value) 
     public Domain Domain { get; } = domain;
 
     public object Value { get; } = value;
+
+    public bool Negated { get; set; } = false;
 
     public IEnumerable<Command> GetCommandsInSubTree()
     {

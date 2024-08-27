@@ -5,6 +5,7 @@
 
 using PSM.Common.MuCalc.Common;
 using PSM.Common.MuCalc.Dissections.Labels;
+using PSM.Common.MuCalc.Dissections.Labels.Operations;
 
 namespace PSM.Common.MuCalc.ModalFormula.Operators;
 
@@ -36,13 +37,18 @@ public class Negation(IModalFormula formula) : IModalFormula
         return new Negation(formula);
     }
 
-    public string ToLatex(Dictionary<Event, IExpression> substitutions)
+    public string ToLatex()
     {
-        return $@"\neg{this.Formula.ToLatex(substitutions)}";
+        return $@"\neg{this.Formula.ToLatex()}";
     }
 
-    public string ToMCRL2(Dictionary<Event, IExpression>? substitutions)
+    public string ToMCRL2()
     {
-        return $"!{this.Formula.ToMCRL2(substitutions)}";
+        return $"!{this.Formula.ToMCRL2()}";
+    }
+    
+    public IModalFormula ApplySubstitutions(Dictionary<Event, IExpression> substitutions)
+    {
+        return new Negation(this.Formula.ApplySubstitutions(substitutions));
     }
 }

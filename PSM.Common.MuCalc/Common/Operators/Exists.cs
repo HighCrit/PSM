@@ -35,33 +35,42 @@ public class Exists<T>(string variableName, Domain domain, T formula) : IModalFo
         this.Domain,
         (this.Formula as IActionFormula)!.Flatten());
 
-    public string ToLatex(Dictionary<Event, IExpression> substitutions)
-    {
-        throw new NotImplementedException();
-    }
-
-    public string ToMCRL2(Dictionary<Event, IExpression>? substitutions)
-    {
-        if (this.Formula is IModalFormula modal)
-        {
-            return $"(exists {this.VariableName}:{this.Domain.Name} . {modal.ToMCRL2(substitutions)})";
-        }
-
-        if (this.Formula is IRegularFormula regular)
-        {
-            return $"(exists {this.VariableName}:{this.Domain.Name} . {regular.ToMCRL2()})";
-        }
-
-        throw new ArgumentException($"Invalid type {this.Formula!.GetType()}");
-    }
-
     public string ToLatex()
     {
-        throw new NotImplementedException();
+        var f = "";
+        if (this.Formula is IModalFormula mf)
+        {
+            f = mf.ToLatex();
+        }
+        if (this.Formula is IActionFormula af)
+        {
+            f = af.ToLatex();
+        }
+        
+        return $@"(\exists_{{{this.VariableName}:{this.Domain.Name}}} {f})";
     }
 
     public string ToMCRL2()
     {
-        return $"(exists {this.VariableName}:{this.Domain.Name} . {this.Formula})";
+        var f = "";
+        if (this.Formula is IModalFormula mf)
+        {
+            f = mf.ToMCRL2();
+        }
+        if (this.Formula is IActionFormula af)
+        {
+            f = af.ToMCRL2();
+        }
+        
+        return $"(exists {this.VariableName}:{this.Domain.Name} . {f})";
+    }
+
+    public IModalFormula ApplySubstitutions(Dictionary<Event, IExpression> substitutions)
+    {
+        if (this.Formula is IModalFormula modalFormula)
+        {
+            return new Exists<IModalFormula>(this.VariableName, this.Domain, modalFormula.ApplySubstitutions(substitutions));
+        }
+        return new Exists<IActionFormula>(this.VariableName, this.Domain, (this.Formula as IActionFormula)!);
     }
 }

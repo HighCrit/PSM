@@ -39,7 +39,7 @@ public class Action(string name, IEnumerable<object>? values = null)
     {
         return this.Values is null
             ? $"\\mathit{{{this.Name}}}"
-            : $"\\mathit{{{this.Name}}}({string.Join(',', this.Values)})";
+            : $"\\mathit{{{this.Name}}}({string.Join(',', this.Values.Select(v => $@"\mathit{{{v}}}"))})";
     }
 
     /// <summary>

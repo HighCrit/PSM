@@ -35,14 +35,19 @@ public class Box(IRegularFormula innerFormula, IModalFormula formula) : IModalFo
     }
 
     /// <inheritdoc />
-    public string ToLatex(Dictionary<Event, IExpression> substitutions)
+    public string ToLatex()
     {
-        return $"[{this.InnerFormula.ToLatex()}]{this.Formula.ToLatex(substitutions)}";
+        return $"[{this.InnerFormula.ToLatex()}]{this.Formula.ToLatex()}";
     }
 
     /// <inheritdoc />
-    public string ToMCRL2(Dictionary<Event, IExpression>? substitutions)
+    public string ToMCRL2()
     {
-        return $"[{this.InnerFormula.ToMCRL2()}]{this.Formula.ToMCRL2(substitutions)}";
+        return $"[{this.InnerFormula.ToMCRL2()}]{this.Formula.ToMCRL2()}";
+    }
+    
+    public IModalFormula ApplySubstitutions(Dictionary<Event, IExpression> substitutions)
+    {
+        return new Box(this.InnerFormula, this.Formula.ApplySubstitutions(substitutions));
     }
 }

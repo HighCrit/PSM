@@ -20,21 +20,18 @@ public class Bool : IModalFormula, IRegularFormula
 
     IRegularFormula IRegularFormula.Flatten() => this;
 
-    /// <inheritdoc />
-    public string ToLatex(Dictionary<Event, IExpression> substitutions) => this.ToLatex();
-
-    /// <inheritdoc />
-    public string ToMCRL2(Dictionary<Event, IExpression> substitutions) => this.ToMCRL2();
-
-    /// <inheritdoc />
+    /// <inheritdoc cref="IModalFormula.ToMCRL2" />
     public string ToLatex()
     {
         return $"\\mathit{{{this.value}}}";
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc cref="IModalFormula.ToMCRL2" />
     public string ToMCRL2()
     {
         return this.value;
     }
+
+    public IModalFormula ApplySubstitutions(Dictionary<Event, IExpression> substitutions)
+        => this;
 }
