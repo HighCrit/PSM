@@ -37,8 +37,8 @@ public class TransitionLabelVisitor : TransitionLabelsBaseVisitor<IExpression>
         return new Variable(
             context.IDENTIFIER().GetText(),
             context.VARIABLE_OP().GetText(),
-            "Bool",
-            context.VARIABLE_VAL().GetText());
+            this.GetDomain(context), 
+            context.variable_val().GetText());
     }
 
     public override IExpression VisitCommand(TransitionLabelsParser.CommandContext context)
@@ -56,5 +56,15 @@ public class TransitionLabelVisitor : TransitionLabelsBaseVisitor<IExpression>
         if (variable is not null) return this.Visit(variable);
         if (or is not null) return this.Visit(or);
         throw new ArgumentNullException();
+    }
+
+    private string GetDomain(TransitionLabelsParser.VariableContext context)
+    {
+        const string @bool = "Bool";
+        const string @int = "Int";
+        if (context.VARIABLE_OP().GetText() is "<" or ">") return @int;
+        
+        var val = context.variable_val();
+        return val?.BOOLEAN() is not null ? @bool : @int;
     }
 }

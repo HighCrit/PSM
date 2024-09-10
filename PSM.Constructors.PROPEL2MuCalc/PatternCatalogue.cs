@@ -103,11 +103,9 @@ public static class PatternCatalogue
     {
         return option switch
         {
-            // [true*. START ](([true*. START ] false) => [(not ( A or END ))*. END ] false)
+            // [true*. START . (not ( A or END ))*. END ] false
             Option.FirstStart | Option.ScopeRepeatability =>
-                new Box(new Kleene(Bool.True),
-                    new Implication(new Box(new Kleene(Bool.True), new Phi(PhiType.Pos, Event.Start, Bool.False)),
-                        new Phi(PhiType.Neg, Event.A | Event.End, new Phi(PhiType.Pos, Event.End, Bool.False)))),
+                new Box(new Kleene(Bool.True), new Phi(PhiType.Pos, Event.Start, new Phi(PhiType.Neg, Event.A | Event.End, new Phi(PhiType.Pos, Event.End, Bool.False)))),
             _ => throw new NotSupportedException(
                 $"The provided option combination '{option}' is currently not supported for the existence behaviour with between scope")
         };

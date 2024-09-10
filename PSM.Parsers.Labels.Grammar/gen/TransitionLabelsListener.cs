@@ -100,4 +100,14 @@ public interface ITransitionLabelsListener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitCommand([NotNull] TransitionLabelsParser.CommandContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="TransitionLabelsParser.variable_val"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterVariable_val([NotNull] TransitionLabelsParser.Variable_valContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="TransitionLabelsParser.variable_val"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitVariable_val([NotNull] TransitionLabelsParser.Variable_valContext context);
 }

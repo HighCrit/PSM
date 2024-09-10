@@ -119,6 +119,18 @@ public partial class TransitionLabelsBaseListener : ITransitionLabelsListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitCommand([NotNull] TransitionLabelsParser.CommandContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="TransitionLabelsParser.variable_val"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterVariable_val([NotNull] TransitionLabelsParser.Variable_valContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="TransitionLabelsParser.variable_val"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitVariable_val([NotNull] TransitionLabelsParser.Variable_valContext context) { }
 
 	/// <inheritdoc/>
 	/// <remarks>The default implementation does nothing.</remarks>

@@ -20,8 +20,7 @@ public class PatternConstructionTest
     {
         const string expectedMcrl2 =
             "[true*](" +
-                "((exists s_1:Bool . (<state_M2'oInEndPosition(s_1)>true && s_1 = true)) -> [true]false) && " +
-                "((exists s_1:Bool . (<state_M2'oInZeroPosition(s_1)>true && s_1 = true)) -> [true]false))";
+                "((<state_M2'oInEndPosition(true)>true || <state_M2'oInZeroPosition(true)>true) && !<state_M2'oEnabled(true)>true) -> [true]false)";
         
         // Absence: (oInEndPosition = true OR oInZeroPosition = true) AND
         var pattern = PatternCatalogue.GetPattern(Behaviour.Absence, Scope.Global, Option.None);
@@ -44,7 +43,8 @@ public class PatternConstructionTest
     {
         // Absence: CmdChk(Stamp)
         // Between: CmdChk(EmergencyStop) and CmdChk(Enable)
-        const string expectedMcrl2 = "[true*][command(EmergencyStop,true)]nu P_1 . ([!command(Enable,true)]P_1 && [command(Stamp,true)]false))";
+        const string expectedMcrl2 = "[true*](" +
+                                        "<CmdChk(EmergencyStop)>true -> [true]nu P_1 . ((!<CmdChk(Enable)>true -> [true]P_1) && (<CmdChk(Stamp)>true -> [true]false)))";
         
         var pattern = PatternCatalogue.GetPattern(Behaviour.Absence, Scope.Between, Option.FirstStart | Option.OptionalEnd | Option.ScopeRepeatability);
         var substitutions = new Dictionary<Event, IExpression>
@@ -54,7 +54,7 @@ public class PatternConstructionTest
             [Event.End] = new Command("Enable"),
         };
 
-        var formula = pattern.ApplySubstitutions(substitutions).Flatten().ToMCRL2();
+        var formula = pattern.ApplySubstitutions(substitutions).Flatten().ToLatex();
         Assert.AreEqual(expectedMcrl2, formula);
     }
     
@@ -62,7 +62,7 @@ public class PatternConstructionTest
     public void Requirement2Generation()
     {
         // Absence: CmdChk(Stamp) AND oSkipProduct
-        const string expectedMcrl2 = "[true*]((exists s_1:Bool . (<state_M2'oSkipProduct(s_1)>true && s_1 = true)) -> [command(Stamp,true)]false)";
+        const string expectedMcrl2 = "[true*]((<CmdChk(Stamp)>true && <state_M2'oSkipProduct(true)>true) -> [true]false)";
         
         var pattern = PatternCatalogue.GetPattern(Behaviour.Absence, Scope.Global, Option.None);
         var substitutions = new Dictionary<Event, IExpression>
@@ -70,7 +70,7 @@ public class PatternConstructionTest
             [Event.A] = new And(new Command("Stamp"), new Variable("state_M2'oSkipProduct", "=", Domain.BOOL.ToString(), "true")),
         };
 
-        var formula = pattern.ApplySubstitutions(substitutions).Flatten().ToMCRL2();
+        var formula = pattern.ApplySubstitutions(substitutions).Flatten().ToLatex();
         Assert.AreEqual(expectedMcrl2, formula);
     }
     
@@ -78,7 +78,11 @@ public class PatternConstructionTest
     public void Requirement3Generation()
     {
         // Response: if iCurrentTemperature < GoalTemp then oHeaterOn
-        const string expectedMcrl2 = "[true*]((exists s_1:Bool . (<state_M2'oCarrierDetected(s_1)>true && s_1 = true)) -> [true]nu P_1 . ((!(exists s_1:Bool . (<state_M2'StopperDown(s_1)>true && s_1 = true)) -> [true]P_1) && ((exists s_1:Int . (<state_M2'iCurrentTemperature(s_1)>true && s_1 >= s_2)) -> [true]nu P_1 . ((!((exists s_1:Bool . (<state_M2'oHeaterOn(s_1)>true && s_1 = true)) && (exists s_1:Bool . (<state_M2'StopperDown(s_1)>true && s_1 = true))) -> [true]P_1) && ((exists s_1:Bool . (<state_M2'StopperDown(s_1)>true && s_1 = true)) -> [true]false)))))))";
+        const string expectedMcrl2 = "[true*](" +
+                                        "(<state_M2'oCarrierDetected(true)>true && !<state_M2'SkipProduct(true)>true) -> " +
+                                            "[true]nu P_1 . ((!<state_M2'StopperDown(true)>true -> [true]P_1) && (" +
+                                                "<state_M2'iCurrentTemperature(s_2)>true -> " +
+                                                    "[true]nu P_1 . ((!(<state_M2'oHeaterOn(true)>true || <state_M2'StopperDown(true)>true) -> [true]P_1) && (<state_M2'StopperDown(true)>true -> [true]false)))))";
         
         var pattern = PatternCatalogue.GetPattern(Behaviour.Response, Scope.Between, Option.Nullity | Option.Precedency | Option.PreArity | Option.PostArity | Option.Repeatability | Option.FirstStart | Option.ScopeRepeatability);
         var substitutions = new Dictionary<Event, IExpression>
@@ -98,7 +102,9 @@ public class PatternConstructionTest
     public void Requirement4Generation()
     {
         // Absence: SkipProduct && oHeaterOn
-        const string expectedMcrl2 = "[true*]((exists s_1:Bool . (<state_M2'oCarrierDetected(s_1)>true && s_1 = true)) -> [true]nu P_1 . ((!(exists s_1:Bool . (<state_M2'StopperDown(s_1)>true && s_1 = true)) -> [true]P_1) && ((exists s_1:Int . (<state_M2'iCurrentTemperature(s_1)>true && s_1 >= s_2)) -> [true]nu P_1 . ((!((exists s_1:Bool . (<state_M2'oHeaterOn(s_1)>true && s_1 = true)) && (exists s_1:Bool . (<state_M2'StopperDown(s_1)>true && s_1 = true))) -> [true]P_1) && ((exists s_1:Bool . (<state_M2'StopperDown(s_1)>true && s_1 = true)) -> [true]false)))))))";
+        const string expectedMcrl2 = "[true*](" +
+                                        "(<state_M2'oCarrierDetected(true)>true && <state_M2'SkipProduct(true)>true) -> " +
+                                            "[true]nu P_1 . ((!<state_M2'StopperDown(true)>true -> [true]P_1) && (<oHeaterOn(true)>true -> [true]false)))";
         
         var pattern = PatternCatalogue.GetPattern(Behaviour.Absence, Scope.Between, Option.FirstStart | Option.OptionalEnd | Option.ScopeRepeatability);
         var substitutions = new Dictionary<Event, IExpression>
@@ -116,7 +122,9 @@ public class PatternConstructionTest
     public void Requirement5Generation()
     {
         // Absence: SkipProduct && oHeaterOn
-        const string expectedMcrl2 = "";
+        const string expectedMcrl2 = "[true*](" +
+                                        "(<state_M2'oCarrierDetected(true)>true && !<state_M2'SkipProduct(true)>true) -> " +
+                                            "[true]nu P_1 . ((!<state_M2'iCurrentTemperature(s_2)>true -> [true]P_1) && (<state_M2'StopperDown(true)>true -> [true]false)))";
         
         var pattern = PatternCatalogue.GetPattern(Behaviour.Absence, Scope.Between, Option.FirstStart | Option.OptionalEnd | Option.ScopeRepeatability);
         var substitutions = new Dictionary<Event, IExpression>
@@ -135,7 +143,7 @@ public class PatternConstructionTest
     public void Requirement6Generation()
     {
         // Absence: StopperDown && InOperation
-        const string expectedMcrl2 = "r";
+        const string expectedMcrl2 = "[true*]((<StopperDown(true)>true && <State.InOperation(true)>true) -> [true]false)";
         
         var pattern = PatternCatalogue.GetPattern(Behaviour.Absence, Scope.Global, Option.None);
         var substitutions = new Dictionary<Event, IExpression>
@@ -152,7 +160,9 @@ public class PatternConstructionTest
     public void Requirement7Generation()
     {
         // Absence: StopperDown && InOperation
-        const string expectedMcrl2 = "r";
+        const string expectedMcrl2 = "[true*](" +
+                                        "(<State.InOperation(true)>true && !<oCarrierDetected(true)>true) -> " +
+                                            "[true]mu X . (<true>true && (<State.InOperation(true)>true -> [true]X)))";
         
         var pattern = PatternCatalogue.GetPattern(Behaviour.Response, Scope.Global, Option.Nullity | Option.Precedency | Option.PreArity | Option.PostArity | Option.Repeatability);
         var substitutions = new Dictionary<Event, IExpression>
@@ -170,7 +180,9 @@ public class PatternConstructionTest
     public void Requirement8Generation()
     {
         // Absence: StopperDown && InOperation
-        const string expectedMcrl2 = "r";
+        const string expectedMcrl2 = "[true*](" +
+                                        "<CmdChk(Enable)>true -> " +
+                                            "[true]nu P_1 . ((!(<state_M2'oEmergencyValve(true)>true || <CmdChk(Stamp)>true) -> [true]P_1) && (<CmdChk(Stamp)>true -> [true]false)))";
         
         var pattern = PatternCatalogue.GetPattern(Behaviour.Existence, Scope.Between, Option.FirstStart | Option.ScopeRepeatability);
         var substitutions = new Dictionary<Event, IExpression>

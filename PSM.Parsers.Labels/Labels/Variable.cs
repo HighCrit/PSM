@@ -1,14 +1,22 @@
 ﻿namespace PSM.Parsers.Labels.Labels;
 
-public struct Variable(string name, string operand, string domain, object value) : IExpression
+public struct Variable : IExpression
 {
-    public string Name { get; } = name;
+    public Variable(string name, string operand, string domain, object value)
+    {
+        this.Name = name;
+        this.Operand = operand;
+        this.Domain = domain;
+        this.Value = value;
+    }
+    
+    public string Name { get; }
 
-    public string Operand { get; } = operand;
+    public string Operand { get; }
 
-    public string Domain { get; } = domain;
+    public string Domain { get; }
 
-    public object Value { get; } = value;
+    public object Value { get; }
 
     public bool Negated { get; set; } = false;
 

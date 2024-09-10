@@ -73,4 +73,10 @@ public interface ITransitionLabelsVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitCommand([NotNull] TransitionLabelsParser.CommandContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TransitionLabelsParser.variable_val"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitVariable_val([NotNull] TransitionLabelsParser.Variable_valContext context);
 }

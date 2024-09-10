@@ -36,21 +36,23 @@ public partial class TransitionLabelsParser : Parser {
 	protected static DFA[] decisionToDFA;
 	protected static PredictionContextCache sharedContextCache = new PredictionContextCache();
 	public const int
-		VARIABLE_VAL=1, BOOLEAN=2, OR=3, AND=4, NOT=5, VARIABLE_OP=6, IDENTIFIER=7, 
-		LPAREN=8, RPAREN=9, CMDCHK=10, WS=11;
+		BOOLEAN=1, INTEGER=2, DECIMAL=3, DIGITS=4, OR=5, AND=6, NOT=7, VARIABLE_OP=8, 
+		IDENTIFIER=9, LPAREN=10, RPAREN=11, CMDCHK=12, WS=13;
 	public const int
 		RULE_label = 0, RULE_orExpr = 1, RULE_andExpr = 2, RULE_negExpr = 3, RULE_val = 4, 
-		RULE_variable = 5, RULE_command = 6;
+		RULE_variable = 5, RULE_command = 6, RULE_variable_val = 7;
 	public static readonly string[] ruleNames = {
-		"label", "orExpr", "andExpr", "negExpr", "val", "variable", "command"
+		"label", "orExpr", "andExpr", "negExpr", "val", "variable", "command", 
+		"variable_val"
 	};
 
 	private static readonly string[] _LiteralNames = {
-		null, null, null, "'||'", "'&&'", "'!'", "'='", null, "'('", "')'", "'CmdChk('"
+		null, null, null, null, null, "'||'", "'&&'", "'!'", null, null, "'('", 
+		"')'", "'CmdChk('"
 	};
 	private static readonly string[] _SymbolicNames = {
-		null, "VARIABLE_VAL", "BOOLEAN", "OR", "AND", "NOT", "VARIABLE_OP", "IDENTIFIER", 
-		"LPAREN", "RPAREN", "CMDCHK", "WS"
+		null, "BOOLEAN", "INTEGER", "DECIMAL", "DIGITS", "OR", "AND", "NOT", "VARIABLE_OP", 
+		"IDENTIFIER", "LPAREN", "RPAREN", "CMDCHK", "WS"
 	};
 	public static readonly IVocabulary DefaultVocabulary = new Vocabulary(_LiteralNames, _SymbolicNames);
 
@@ -119,9 +121,9 @@ public partial class TransitionLabelsParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 14;
+			State = 16;
 			orExpr();
-			State = 15;
+			State = 17;
 			Match(Eof);
 			}
 		}
@@ -178,21 +180,21 @@ public partial class TransitionLabelsParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 17;
+			State = 19;
 			andExpr();
-			State = 22;
+			State = 24;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			while (_la==OR) {
 				{
 				{
-				State = 18;
+				State = 20;
 				Match(OR);
-				State = 19;
+				State = 21;
 				andExpr();
 				}
 				}
-				State = 24;
+				State = 26;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
@@ -251,21 +253,21 @@ public partial class TransitionLabelsParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 25;
+			State = 27;
 			negExpr();
-			State = 30;
+			State = 32;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			while (_la==AND) {
 				{
 				{
-				State = 26;
+				State = 28;
 				Match(AND);
-				State = 27;
+				State = 29;
 				negExpr();
 				}
 				}
-				State = 32;
+				State = 34;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
@@ -318,16 +320,16 @@ public partial class TransitionLabelsParser : Parser {
 		NegExprContext _localctx = new NegExprContext(Context, State);
 		EnterRule(_localctx, 6, RULE_negExpr);
 		try {
-			State = 36;
+			State = 38;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case NOT:
 				EnterOuterAlt(_localctx, 1);
 				{
 				{
-				State = 33;
+				State = 35;
 				Match(NOT);
-				State = 34;
+				State = 36;
 				negExpr();
 				}
 				}
@@ -337,7 +339,7 @@ public partial class TransitionLabelsParser : Parser {
 			case CMDCHK:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 35;
+				State = 37;
 				val();
 				}
 				break;
@@ -396,31 +398,31 @@ public partial class TransitionLabelsParser : Parser {
 		ValContext _localctx = new ValContext(Context, State);
 		EnterRule(_localctx, 8, RULE_val);
 		try {
-			State = 44;
+			State = 46;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case CMDCHK:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 38;
+				State = 40;
 				command();
 				}
 				break;
 			case IDENTIFIER:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 39;
+				State = 41;
 				variable();
 				}
 				break;
 			case LPAREN:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 40;
-				Match(LPAREN);
-				State = 41;
-				orExpr();
 				State = 42;
+				Match(LPAREN);
+				State = 43;
+				orExpr();
+				State = 44;
 				Match(RPAREN);
 				}
 				break;
@@ -442,7 +444,9 @@ public partial class TransitionLabelsParser : Parser {
 	public partial class VariableContext : ParserRuleContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode IDENTIFIER() { return GetToken(TransitionLabelsParser.IDENTIFIER, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode VARIABLE_OP() { return GetToken(TransitionLabelsParser.VARIABLE_OP, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode VARIABLE_VAL() { return GetToken(TransitionLabelsParser.VARIABLE_VAL, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public Variable_valContext variable_val() {
+			return GetRuleContext<Variable_valContext>(0);
+		}
 		public VariableContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
@@ -470,15 +474,24 @@ public partial class TransitionLabelsParser : Parser {
 	public VariableContext variable() {
 		VariableContext _localctx = new VariableContext(Context, State);
 		EnterRule(_localctx, 10, RULE_variable);
+		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 46;
-			Match(IDENTIFIER);
-			State = 47;
-			Match(VARIABLE_OP);
 			State = 48;
-			Match(VARIABLE_VAL);
+			Match(IDENTIFIER);
+			State = 51;
+			ErrorHandler.Sync(this);
+			_la = TokenStream.LA(1);
+			if (_la==VARIABLE_OP) {
+				{
+				State = 49;
+				Match(VARIABLE_OP);
+				State = 50;
+				variable_val();
+				}
+			}
+
 			}
 		}
 		catch (RecognitionException re) {
@@ -526,11 +539,11 @@ public partial class TransitionLabelsParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 50;
+			State = 53;
 			Match(CMDCHK);
-			State = 51;
+			State = 54;
 			Match(IDENTIFIER);
-			State = 52;
+			State = 55;
 			Match(RPAREN);
 			}
 		}
@@ -545,22 +558,81 @@ public partial class TransitionLabelsParser : Parser {
 		return _localctx;
 	}
 
+	public partial class Variable_valContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode BOOLEAN() { return GetToken(TransitionLabelsParser.BOOLEAN, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode INTEGER() { return GetToken(TransitionLabelsParser.INTEGER, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode DECIMAL() { return GetToken(TransitionLabelsParser.DECIMAL, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode IDENTIFIER() { return GetToken(TransitionLabelsParser.IDENTIFIER, 0); }
+		public Variable_valContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_variable_val; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			ITransitionLabelsListener typedListener = listener as ITransitionLabelsListener;
+			if (typedListener != null) typedListener.EnterVariable_val(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			ITransitionLabelsListener typedListener = listener as ITransitionLabelsListener;
+			if (typedListener != null) typedListener.ExitVariable_val(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ITransitionLabelsVisitor<TResult> typedVisitor = visitor as ITransitionLabelsVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitVariable_val(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public Variable_valContext variable_val() {
+		Variable_valContext _localctx = new Variable_valContext(Context, State);
+		EnterRule(_localctx, 14, RULE_variable_val);
+		int _la;
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 57;
+			_la = TokenStream.LA(1);
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 526L) != 0)) ) {
+			ErrorHandler.RecoverInline(this);
+			}
+			else {
+				ErrorHandler.ReportMatch(this);
+			    Consume();
+			}
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
 	private static int[] _serializedATN = {
-		4,1,11,55,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,1,0,
-		1,0,1,0,1,1,1,1,1,1,5,1,21,8,1,10,1,12,1,24,9,1,1,2,1,2,1,2,5,2,29,8,2,
-		10,2,12,2,32,9,2,1,3,1,3,1,3,3,3,37,8,3,1,4,1,4,1,4,1,4,1,4,1,4,3,4,45,
-		8,4,1,5,1,5,1,5,1,5,1,6,1,6,1,6,1,6,1,6,0,0,7,0,2,4,6,8,10,12,0,0,52,0,
-		14,1,0,0,0,2,17,1,0,0,0,4,25,1,0,0,0,6,36,1,0,0,0,8,44,1,0,0,0,10,46,1,
-		0,0,0,12,50,1,0,0,0,14,15,3,2,1,0,15,16,5,0,0,1,16,1,1,0,0,0,17,22,3,4,
-		2,0,18,19,5,3,0,0,19,21,3,4,2,0,20,18,1,0,0,0,21,24,1,0,0,0,22,20,1,0,
-		0,0,22,23,1,0,0,0,23,3,1,0,0,0,24,22,1,0,0,0,25,30,3,6,3,0,26,27,5,4,0,
-		0,27,29,3,6,3,0,28,26,1,0,0,0,29,32,1,0,0,0,30,28,1,0,0,0,30,31,1,0,0,
-		0,31,5,1,0,0,0,32,30,1,0,0,0,33,34,5,5,0,0,34,37,3,6,3,0,35,37,3,8,4,0,
-		36,33,1,0,0,0,36,35,1,0,0,0,37,7,1,0,0,0,38,45,3,12,6,0,39,45,3,10,5,0,
-		40,41,5,8,0,0,41,42,3,2,1,0,42,43,5,9,0,0,43,45,1,0,0,0,44,38,1,0,0,0,
-		44,39,1,0,0,0,44,40,1,0,0,0,45,9,1,0,0,0,46,47,5,7,0,0,47,48,5,6,0,0,48,
-		49,5,1,0,0,49,11,1,0,0,0,50,51,5,10,0,0,51,52,5,7,0,0,52,53,5,9,0,0,53,
-		13,1,0,0,0,4,22,30,36,44
+		4,1,13,60,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,7,
+		7,7,1,0,1,0,1,0,1,1,1,1,1,1,5,1,23,8,1,10,1,12,1,26,9,1,1,2,1,2,1,2,5,
+		2,31,8,2,10,2,12,2,34,9,2,1,3,1,3,1,3,3,3,39,8,3,1,4,1,4,1,4,1,4,1,4,1,
+		4,3,4,47,8,4,1,5,1,5,1,5,3,5,52,8,5,1,6,1,6,1,6,1,6,1,7,1,7,1,7,0,0,8,
+		0,2,4,6,8,10,12,14,0,1,2,0,1,3,9,9,57,0,16,1,0,0,0,2,19,1,0,0,0,4,27,1,
+		0,0,0,6,38,1,0,0,0,8,46,1,0,0,0,10,48,1,0,0,0,12,53,1,0,0,0,14,57,1,0,
+		0,0,16,17,3,2,1,0,17,18,5,0,0,1,18,1,1,0,0,0,19,24,3,4,2,0,20,21,5,5,0,
+		0,21,23,3,4,2,0,22,20,1,0,0,0,23,26,1,0,0,0,24,22,1,0,0,0,24,25,1,0,0,
+		0,25,3,1,0,0,0,26,24,1,0,0,0,27,32,3,6,3,0,28,29,5,6,0,0,29,31,3,6,3,0,
+		30,28,1,0,0,0,31,34,1,0,0,0,32,30,1,0,0,0,32,33,1,0,0,0,33,5,1,0,0,0,34,
+		32,1,0,0,0,35,36,5,7,0,0,36,39,3,6,3,0,37,39,3,8,4,0,38,35,1,0,0,0,38,
+		37,1,0,0,0,39,7,1,0,0,0,40,47,3,12,6,0,41,47,3,10,5,0,42,43,5,10,0,0,43,
+		44,3,2,1,0,44,45,5,11,0,0,45,47,1,0,0,0,46,40,1,0,0,0,46,41,1,0,0,0,46,
+		42,1,0,0,0,47,9,1,0,0,0,48,51,5,9,0,0,49,50,5,8,0,0,50,52,3,14,7,0,51,
+		49,1,0,0,0,51,52,1,0,0,0,52,11,1,0,0,0,53,54,5,12,0,0,54,55,5,9,0,0,55,
+		56,5,11,0,0,56,13,1,0,0,0,57,58,7,0,0,0,58,15,1,0,0,0,5,24,32,38,46,51
 	};
 
 	public static readonly ATN _ATN =
