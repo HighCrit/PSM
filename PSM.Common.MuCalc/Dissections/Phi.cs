@@ -1,4 +1,4 @@
-﻿// <copyright file="Phi.cs" company="HighCrit">
+// <copyright file="Phi.cs" company="HighCrit">
 // Copyright (c) HighCrit. This file is released under GPLv3.
 // See LICENSE for full license details.
 // </copyright>

@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PSM.Common.PROPEL\PSM.Common.PROPEL.csproj" />
+    <ProjectReference Include="..\PSM.Constructors.PROPEL2MuCalc\PSM.Constructors.PROPEL2MuCalc.csproj" />
+    <ProjectReference Include="..\PSM.Constructors.PROPEL2SM\PSM.Constructors.PROPEL2SM.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -7,7 +7,7 @@ negExpr: (NOT negExpr) | val;
 
 val: command | variable | LPAREN orExpr RPAREN;
 
-variable: IDENTIFIER (VARIABLE_OP variable_val)?;
+variable: IDENTIFIER (VARIABLE_OP VARIABLE_VAL)?;
 command: CMDCHK IDENTIFIER RPAREN;
 
 variable_val: BOOLEAN | INTEGER | DECIMAL | IDENTIFIER;

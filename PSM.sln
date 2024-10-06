@@ -19,17 +19,23 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PSM.Common.MuCalc", "PSM.Co
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{93161010-9046-4CB6-A755-FF9F22D661B4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PSM.Constructors.PROPEL2MuCalc", "PSM.Constructors.PROPEL2MuCalc\PSM.Constructors.PROPEL2MuCalc.csproj", "{F16A27D5-EE53-4F52-A348-D65C8A460AF7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PSM.Constructors.PROPEL2MuCalc", "PSM.Constructors.PROPEL2MuCalc\PSM.Constructors.PROPEL2MuCalc.csproj", "{F16A27D5-EE53-4F52-A348-D65C8A460AF7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PSM.Common.MuCalc.Tests", "PSM.Common.MuCalc.Tests\PSM.Common.MuCalc.Tests.csproj", "{61534FA6-B4E9-4C9F-B238-048E813D660F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PSM.Common.MuCalc.Tests", "PSM.Common.MuCalc.Tests\PSM.Common.MuCalc.Tests.csproj", "{61534FA6-B4E9-4C9F-B238-048E813D660F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PSM.Constructors.PROPEL2MuCalc.Tests", "PSM.Constructors.PROPEL2MuCalc.Tests\PSM.Constructors.PROPEL2MuCalc.Tests.csproj", "{C0393A48-0E7F-4795-9998-C2A3B37B6F3B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PSM.Constructors.PROPEL2MuCalc.Tests", "PSM.Constructors.PROPEL2MuCalc.Tests\PSM.Constructors.PROPEL2MuCalc.Tests.csproj", "{C0393A48-0E7F-4795-9998-C2A3B37B6F3B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PSM.Parsers.Labels.Grammar", "PSM.Parsers.Labels.Grammar\PSM.Parsers.Labels.Grammar.csproj", "{DF28B906-5656-4D9F-8FE5-F31730296876}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PSM.Parsers.Labels.Grammar", "PSM.Parsers.Labels.Grammar\PSM.Parsers.Labels.Grammar.csproj", "{DF28B906-5656-4D9F-8FE5-F31730296876}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PSM.Parsers.Labels", "PSM.Parsers.Labels\PSM.Parsers.Labels.csproj", "{BFBD580F-41F8-4947-9015-2FD137630063}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PSM.Parsers.Labels", "PSM.Parsers.Labels\PSM.Parsers.Labels.csproj", "{BFBD580F-41F8-4947-9015-2FD137630063}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PSM.Parsers.Labels.Tests", "PSM.Parsers.Labels.Tests\PSM.Parsers.Labels.Tests.csproj", "{D096C41B-7FF5-4874-904E-717035EC9B33}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PSM.Parsers.Labels.Tests", "PSM.Parsers.Labels.Tests\PSM.Parsers.Labels.Tests.csproj", "{D096C41B-7FF5-4874-904E-717035EC9B33}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PSM.Gui", "PSM.Gui\PSM.Gui.csproj", "{116B119F-6709-44A6-A326-FA14FA6949D9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PSM.UML.SM", "PSM.UML.SM\PSM.UML.SM.csproj", "{37F9C375-365C-49E3-B368-0622B22F0723}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PSM.Constructors.PROPEL2SM", "PSM.Constructors.PROPEL2SM\PSM.Constructors.PROPEL2SM.csproj", "{98E5B0BF-F012-42BD-847D-B373C032476F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -77,6 +83,18 @@ Global
 		{D096C41B-7FF5-4874-904E-717035EC9B33}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D096C41B-7FF5-4874-904E-717035EC9B33}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D096C41B-7FF5-4874-904E-717035EC9B33}.Release|Any CPU.Build.0 = Release|Any CPU
+		{116B119F-6709-44A6-A326-FA14FA6949D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{116B119F-6709-44A6-A326-FA14FA6949D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{116B119F-6709-44A6-A326-FA14FA6949D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{116B119F-6709-44A6-A326-FA14FA6949D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37F9C375-365C-49E3-B368-0622B22F0723}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37F9C375-365C-49E3-B368-0622B22F0723}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37F9C375-365C-49E3-B368-0622B22F0723}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37F9C375-365C-49E3-B368-0622B22F0723}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98E5B0BF-F012-42BD-847D-B373C032476F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98E5B0BF-F012-42BD-847D-B373C032476F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98E5B0BF-F012-42BD-847D-B373C032476F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98E5B0BF-F012-42BD-847D-B373C032476F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

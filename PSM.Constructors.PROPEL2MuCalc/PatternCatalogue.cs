@@ -1,4 +1,4 @@
-﻿// <copyright file="PatternCatalogue.cs" company="HighCrit">
+// <copyright file="PatternCatalogue.cs" company="HighCrit">
 // Copyright (c) HighCrit. This file is released under GPLv3.
 // See LICENSE for full license details.
 // </copyright>
@@ -14,6 +14,7 @@ using PSM.Common.MuCalc.ModalFormula.Operators;
 using PSM.Common.MuCalc.RegularFormula;
 using PSM.Common.MuCalc.RegularFormula.Operators;
 using PSM.Common.PROPEL;
+using Action = PSM.Common.MuCalc.Actions.Action;
 
 namespace PSM.Constructors.PROPEL2MuCalc;
 
