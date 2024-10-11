@@ -11,7 +11,7 @@ public class StateMachine : IStateMachine
         this.states.Add(state);
     }
 
-    public void AddStates(params State[] ss) => this.AddStates(ss);
+    public void AddStates(params State[] ss) => this.AddStates(ss as IEnumerable<State>);
 
     public void AddStates(IEnumerable<State> ss)
     {

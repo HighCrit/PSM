@@ -12,6 +12,7 @@
     <ProjectReference Include="..\PSM.Common.PROPEL\PSM.Common.PROPEL.csproj" />
     <ProjectReference Include="..\PSM.Constructors.PROPEL2MuCalc\PSM.Constructors.PROPEL2MuCalc.csproj" />
     <ProjectReference Include="..\PSM.Constructors.PROPEL2SM\PSM.Constructors.PROPEL2SM.csproj" />
+    <ProjectReference Include="..\PSM.Constructors.SM2DOT\PSM.Constructors.SM2DOT.csproj" />
   </ItemGroup>
 
 </Project>

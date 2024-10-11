@@ -2,6 +2,7 @@ using PSM.Common;
 using PSM.Common.MuCalc.ModalFormula;
 using PSM.Common.PROPEL;
 using PSM.Constructors.PROPEL2MuCalc;
+using PSM.Constructors.SM2DOT;
 using PSM.Parsers.Labels;
 using PSM.Parsers.Labels.Labels;
 
@@ -156,6 +157,30 @@ namespace PSM.Gui
                 "Succes",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information);
+        }
+
+        private void reloadFSABtn_Click(object sender, EventArgs e)
+        {
+            this.SMImageBox.Image?.Dispose();
+
+            var labels = new Dictionary<Event, string>();
+            foreach (var @event in (this.lastScope, this.lastBehaviour).GetEvents())
+            {
+                var label = @event switch
+                {
+                    Event.A => this.aTextBox.Text!,
+                    Event.B => this.bTextBox.Text!,
+                    Event.Start => this.startTextBox.Text!,
+                    Event.End => this.endTextBox.Text!,
+                };
+
+                labels.Add(@event, label);
+            }
+
+            var sm = SMCatalogue.GetSM(this.lastBehaviour, this.lastScope, this.lastOption, labels);
+            var pngPath = SmConverter.ToPNG(sm);
+
+            this.SMImageBox.Image = Image.FromFile(pngPath);
         }
     }
 }

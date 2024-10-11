@@ -81,7 +81,7 @@ public static class SMCatalogue
         var initial = new State(StateType.Initial);
         var one = new State(StateType.Normal, "Accepting", "1");
         var two = new State(StateType.Normal, "Accepting", "2");
-        var three = new State(StateType.Normal, option.HasFlag(Option.OptionalEnd) ? string.Empty : "Accepting", "3");
+        var three = new State(StateType.Normal, option.HasFlag(Option.OptionalEnd) ? "Accepting" : string.Empty, "3");
         sm.AddStates(initial, one, two, three);
 
         initial.AddTransition(one, string.Empty);
@@ -146,7 +146,7 @@ public static class SMCatalogue
         var one = new State(StateType.Normal, option.HasFlag(Option.Nullity) ? "Accepting" : string.Empty, "1");
         var two = new State(StateType.Normal, text: "2");
         var three = new State(StateType.Normal, "Accepting", "3");
-        sm.AddStates(initial, one, two);
+        sm.AddStates(initial, one, two, three);
 
         initial.AddTransition(one, string.Empty);
 

@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            pictureBox1 = new PictureBox();
+            SMImageBox = new PictureBox();
             templateBox = new GroupBox();
             behaviourLabel = new Label();
             scopeLabel = new Label();
@@ -47,19 +47,19 @@
             optionsList = new CheckedListBox();
             generateBtn = new Button();
             reloadFSABtn = new Button();
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)SMImageBox).BeginInit();
             templateBox.SuspendLayout();
             eventBox.SuspendLayout();
             optionsBox.SuspendLayout();
             SuspendLayout();
             // 
-            // pictureBox1
+            // SMImageBox
             // 
-            pictureBox1.Location = new Point(337, 25);
-            pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(767, 540);
-            pictureBox1.TabIndex = 0;
-            pictureBox1.TabStop = false;
+            SMImageBox.Location = new Point(337, 25);
+            SMImageBox.Name = "SMImageBox";
+            SMImageBox.Size = new Size(767, 540);
+            SMImageBox.TabIndex = 0;
+            SMImageBox.TabStop = false;
             // 
             // templateBox
             // 
@@ -234,6 +234,7 @@
             reloadFSABtn.TabIndex = 5;
             reloadFSABtn.Text = "Reload FSA";
             reloadFSABtn.UseVisualStyleBackColor = true;
+            reloadFSABtn.Click += reloadFSABtn_Click;
             // 
             // PSMConstructorGui
             // 
@@ -245,10 +246,10 @@
             Controls.Add(optionsBox);
             Controls.Add(eventBox);
             Controls.Add(templateBox);
-            Controls.Add(pictureBox1);
+            Controls.Add(SMImageBox);
             Name = "PSMConstructorGui";
             Text = "PSM";
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)SMImageBox).EndInit();
             templateBox.ResumeLayout(false);
             templateBox.PerformLayout();
             eventBox.ResumeLayout(false);
@@ -259,7 +260,7 @@
 
         #endregion
 
-        private PictureBox pictureBox1;
+        private PictureBox SMImageBox;
         private GroupBox templateBox;
         private GroupBox eventBox;
         private GroupBox optionsBox;
