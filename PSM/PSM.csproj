@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\cordis-to-cordis\Cordis2Cordis\Cordis2Cordis\Cordis2Cordis.csproj" />
+    <ProjectReference Include="..\cordis-to-cordis\Cordis2Cordis\CordisSchema\CordisSchema.csproj" />
+    <ProjectReference Include="..\PSM.Common.MuCalc\PSM.Common.MuCalc.csproj" />
+    <ProjectReference Include="..\PSM.Common.PROPEL\PSM.Common.PROPEL.csproj" />
+    <ProjectReference Include="..\PSM.Constructors.PROPEL2DNL\PSM.Constructors.PROPEL2DNL.csproj" />
+    <ProjectReference Include="..\PSM.Constructors.PROPEL2MuCalc\PSM.Constructors.PROPEL2MuCalc.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -8,5 +8,5 @@ public interface IExpression
     
     public string ToMCRL2();
     
-    public string ToString() => this.ToMCRL2();
+    public string ToString() => this.ToMCRL2()!;
 }

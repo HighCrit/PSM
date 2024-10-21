@@ -3,8 +3,6 @@ using PSM.Common.MuCalc.ModalFormula;
 using PSM.Common.PROPEL;
 using PSM.Constructors.PROPEL2MuCalc;
 using PSM.Constructors.SM2DOT;
-using PSM.Parsers.Labels;
-using PSM.Parsers.Labels.Labels;
 
 namespace PSM.Gui
 {
@@ -13,11 +11,21 @@ namespace PSM.Gui
         private Scope lastScope;
         private Behaviour lastBehaviour;
         private Option lastOption;
+        private PSMFactory? psmFactory;
+
+        private TextBox lastTextBox;
+
+        public PSMConstructorGui(string path) : this()
+        {
+            this.SetFactory(path);
+        }
 
         public PSMConstructorGui()
         {
             this.InitializeComponent();
             this.SetupChoices();
+
+            this.lastTextBox = this.aTextBox;
         }
 
         public void SetupChoices()
@@ -102,64 +110,82 @@ namespace PSM.Gui
             }
         }
 
+        private void updateLastFocusedTextBox(object sender, EventArgs e)
+        {
+            this.lastTextBox = (TextBox)sender;
+        }
+
         private void scopeComboBox_SelectedIndexChanged(object sender, EventArgs e) => this.UpdateScope();
 
         private void behaviourComboBox_SelectedIndexChanged(object sender, EventArgs e) => this.UpdateBehaviour();
 
-        private void generateBtn_Click(object sender, EventArgs e)
+        private void importToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            IModalFormula pattern;
+            using var dialog = new OpenFileDialog
+            {
+                InitialDirectory = "%userprofile%",
+                Filter = "eXtensible Markup Language files (*.xml)|*.xml",
+                RestoreDirectory = true
+            };
+
+            if (dialog.ShowDialog() is DialogResult.OK)
+            {
+                var path = dialog.FileName;
+
+                this.SetFactory(path);
+            }
+        }
+
+        private void SetFactory(string path)
+        {
+            psmFactory = new PSMFactory(path);
+
+            templateBox.Enabled = true;
+            eventBox.Enabled = true;
+            exportToolStripMenuItem.Enabled = true;
+            viewTabControl.Enabled = true;
+            optionsBox.Enabled = true;
+
+            PopulateTreeView(variableOptionsTree, this.psmFactory.Variables, '.');
+            PopulateTreeView(variableOptionsTree, this.psmFactory.Commands, '$');
+        }
+
+        private void mucalculusToolStripMenuItem_Click(object sender, EventArgs e) => this.export(f => f.ToMCRL2());
+
+        private void laTeXToolStripMenuItem_Click(object sender, EventArgs e) => this.export(f => f.ToLatex());
+
+        private void export(Func<IModalFormula, string> appl)
+        {
             try
             {
-                pattern = PatternCatalogue.GetPattern(this.lastBehaviour, this.lastScope, this.lastOption);
+                var formula = psmFactory!.GenerateMuCalcFormula(
+                    this.lastBehaviour,
+                    this.lastScope,
+                    this.lastOption,
+                    this.aTextBox.Text,
+                    this.bTextBox.Enabled ? this.bTextBox.Text : null,
+                    this.startTextBox.Enabled ? this.startTextBox.Text : null,
+                    this.endTextBox.Enabled ? this.endTextBox.Text : null);
+
+                Clipboard.SetText(appl(formula));
+                MessageBox.Show(
+                    "Succesfully copied formula to clipboard.",
+                    "Succes",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
             }
-            catch
+            catch (Exception ex)
             {
                 MessageBox.Show(
-                    "Unable to find pattern for provided scope, behaviour and options.",
-                    "Missing pattern",
+                    ex.Message,
+                    "Failed to generate formula.",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
                 return;
             }
-
-            var substitutions = new Dictionary<Event, IExpression>();
-            foreach (var @event in (this.lastScope, this.lastBehaviour).GetEvents())
-            {
-                IExpression exp;
-                try
-                {
-                    exp = @event switch
-                    {
-                        Event.A => LabelParser.Parse(this.aTextBox.Text)!,
-                        Event.B => LabelParser.Parse(this.bTextBox.Text)!,
-                        Event.Start => LabelParser.Parse(this.startTextBox.Text)!,
-                        Event.End => LabelParser.Parse(this.endTextBox.Text)!,
-                    };
-                }
-                catch
-                {
-                    MessageBox.Show(
-                        $"Failed to parse expression for token '{@event}'.",
-                        "Failed to parse expression",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Exclamation);
-                    return;
-                }
-
-                substitutions.Add(@event, exp);
-            }
-
-            var muCalc = pattern.ApplySubstitutions(substitutions).Flatten().ToMCRL2();
-            Clipboard.SetText(muCalc);
-            MessageBox.Show(
-                "Succesfully copied mu-calculus formula to clipboard.",
-                "Succes",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information);
         }
 
-        private void reloadFSABtn_Click(object sender, EventArgs e)
+        private void SMImageBox_Click(object sender, EventArgs e)
         {
             this.SMImageBox.Image?.Dispose();
 
@@ -181,6 +207,41 @@ namespace PSM.Gui
             var pngPath = SmConverter.ToPNG(sm);
 
             this.SMImageBox.Image = Image.FromFile(pngPath);
+        }
+
+        private static void PopulateTreeView(TreeView treeView, IEnumerable<string> paths, char pathSeparator)
+        {
+            TreeNode lastNode = null;
+            string subPathAgg;
+            foreach (string path in paths)
+            {
+                subPathAgg = string.Empty;
+                foreach (string subPath in path.Split(pathSeparator))
+                {
+                    subPathAgg += subPath + pathSeparator;
+                    TreeNode[] nodes = treeView.Nodes.Find(subPathAgg, true);
+                    if (nodes.Length == 0)
+                        if (lastNode == null)
+                            lastNode = treeView.Nodes.Add(subPathAgg, subPath);
+                        else
+                            lastNode = lastNode.Nodes.Add(subPathAgg, subPath);
+                    else
+                        lastNode = nodes[0];
+                }
+                lastNode = null; // This is the place code was changed
+
+            }
+        }
+
+        private void variableOptionsTree_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            this.lastTextBox.Text += e.Node!.FullPath.Replace('\\', '.');
+        }
+
+        private void dnlLabel_Click(object sender, EventArgs e)
+        {
+            var dnl = psmFactory!.GetDNL(this.lastBehaviour, this.lastScope, this.lastOption);
+            dnlLabel.Text = dnl;
         }
     }
 }

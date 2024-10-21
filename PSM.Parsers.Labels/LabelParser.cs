@@ -6,9 +6,9 @@ namespace PSM.Parsers.Labels;
 
 public static class LabelParser
 {
-    public static IExpression? Parse(string label)
+    public static IExpression? Parse(string? label)
     {
-        if (string.IsNullOrWhiteSpace(label)) return null;
+        if (string.IsNullOrWhiteSpace(label)) return Labels.Boolean.True;
         
         var stream = new AntlrInputStream(label);
         var lexer = new TransitionLabelsLexer(stream);

@@ -32,6 +32,6 @@ public struct Variable : IExpression
 
     public string ToMCRL2()
     {
-        return $"exists s_1 : {this.Domain} . <{this.Name}(s_1)> && s_1 {this.Operand} {this.Value}";
+        return $"exists s_1,s_2 : {this.Domain} . <{this.Name}(s_1)> && (s_1 {this.Operand} s_2) && (s_2 == {this.Value})";
     }
 }

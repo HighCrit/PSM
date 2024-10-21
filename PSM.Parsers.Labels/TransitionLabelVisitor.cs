@@ -34,16 +34,25 @@ public class TransitionLabelVisitor : TransitionLabelsBaseVisitor<IExpression>
 
     public override IExpression VisitVariable(TransitionLabelsParser.VariableContext context)
     {
+        if (string.IsNullOrWhiteSpace(context.variable_val()?.GetText()))
+        {
+            return new Variable(
+                context.PATH().GetText(),
+                "==",
+                "bool",
+                "true");
+        }
+
         return new Variable(
-            context.IDENTIFIER().GetText(),
+            context.PATH().GetText(),
             context.VARIABLE_OP().GetText(),
-            this.GetDomain(context), 
+            this.GetDomain(context),
             context.variable_val().GetText());
     }
 
     public override IExpression VisitCommand(TransitionLabelsParser.CommandContext context)
     {
-        return new Command(context.IDENTIFIER().GetText());
+        return new Command(context.PATH().GetText());
     }
 
     public override IExpression VisitVal(TransitionLabelsParser.ValContext context)
