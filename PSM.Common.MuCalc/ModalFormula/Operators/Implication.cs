@@ -43,7 +43,7 @@ public class Implication(IModalFormula left, IModalFormula right) : IModalFormul
 
     public string ToMCRL2()
     {
-        return $"({this.Left.ToMCRL2()} -> {this.Right.ToMCRL2()})";
+        return $"({this.Left.ToMCRL2()} => {this.Right.ToMCRL2()})";
     }
     
     public IModalFormula ApplySubstitutions(Dictionary<Event, IExpression> substitutions)

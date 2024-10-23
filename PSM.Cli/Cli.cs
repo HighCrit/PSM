@@ -82,11 +82,11 @@ public class Cli
     private static IExpression ReadExpr(string message)
     {
         Console.WriteLine(message);
-        var res = LabelParser.Parse(string.Empty + Console.ReadLine());
+        var res = LabelParser.Parse([], string.Empty + Console.ReadLine());
         while (res is null)
         {
             Console.WriteLine("Please enter a valid expression:");
-            res = LabelParser.Parse(string.Empty + Console.ReadLine());
+            res = LabelParser.Parse([], string.Empty + Console.ReadLine());
         }
 
         return res;

@@ -7,6 +7,7 @@ using System.Diagnostics;
 using PSM.Common.MuCalc.ActionFormula;
 using PSM.Common.MuCalc.ActionFormula.Operators;
 using PSM.Common.MuCalc.Common;
+using PSM.Common.MuCalc.Common.Operators;
 using PSM.Common.MuCalc.ModalFormula;
 using PSM.Common.MuCalc.ModalFormula.Operators;
 using PSM.Parsers.Labels.Labels;
@@ -30,7 +31,7 @@ public class Phi(PhiType type, Event ev, IModalFormula sig) : IModalFormula
                 if (substitutions is null)
                 {
                     // Only used by ToString
-                    return new Command(e.ToString());
+                    return new Command(0, e.ToString());
                 }
                 if (!substitutions.TryGetValue(e, out var label))
                 {
@@ -95,7 +96,7 @@ public class Phi(PhiType type, Event ev, IModalFormula sig) : IModalFormula
     public IModalFormula ParseCommand(Command command)
     {
         return new Diamond(
-            new RegularFormula.ActionFormula(new ActionFormula.ActionFormula(new Action("CmdChk", [command.Name]))),
+            new RegularFormula.ActionFormula(new ActionFormula.ActionFormula(new Action("cmd_chk", [command.MachinePartIndex, $"M{command.MachinePartIndex}'Cmd{command.Name}"]))),
             Bool.True);
     }
 
@@ -127,12 +128,31 @@ public class Phi(PhiType type, Event ev, IModalFormula sig) : IModalFormula
 
     private IModalFormula SingleVar(Variable var)
     {
-        var res = new Diamond(
-            new RegularFormula.ActionFormula(
-                new ActionFormula.ActionFormula(new Action(var.Name, [var.Value]))),
-            Bool.True);
+        var lhsName = $"state_M{var.LHS.MachineIndex}'{var.LHS.Name}";
+        var domain = var.Domain == Domain.BOOL.Name ? Domain.BOOL : Domain.INT;
 
-        return var.Negated ? new Negation(res) : res;
+        if (var.RHS is ModelInfo rhsInfo)
+        {
+            var rhsName = $"state_M{rhsInfo.MachineIndex}'{rhsInfo.Name}";
+
+            return new Exists<IModalFormula>(
+                "s_1,s_2",
+                domain,
+                new Conjunction(
+                    new Diamond(new RegularFormula.ActionFormula(new ActionFormula.ActionFormula(new Action(lhsName, ["s_1"]))), Bool.True),
+                    new Conjunction(
+                        new Diamond(new RegularFormula.ActionFormula(new ActionFormula.ActionFormula(new Action(rhsName, ["s_2"]))), Bool.True),
+                        new BooleanExp($"s_1 {var.Operand} s_2"))));
+        }
+
+        return new Exists<IModalFormula>(
+            "s_1",
+            domain,
+            new Conjunction(
+                new Diamond(
+                    new RegularFormula.ActionFormula(new ActionFormula.ActionFormula(new Action(lhsName, ["s_1"]))),
+                    Bool.True),
+                new BooleanExp($"s_1 {var.Operand} {var.RHS}")));
     }
 
     public IModalFormula Flatten() => this;

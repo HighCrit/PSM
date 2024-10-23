@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\PSM.Common\PSM.Common.csproj" />
       <ProjectReference Include="..\PSM.Parsers.Labels.Grammar\PSM.Parsers.Labels.Grammar.csproj" />
     </ItemGroup>
 

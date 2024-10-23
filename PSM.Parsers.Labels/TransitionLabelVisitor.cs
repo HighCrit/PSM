@@ -1,3 +1,4 @@
+using Antlr4.Runtime.Tree;
 using PSM.Parsers.Labels.Labels;
 using PSM.Parsers.Labels.Labels.Operations;
 
@@ -5,6 +6,24 @@ namespace PSM.Parsers.Labels;
 
 public class TransitionLabelVisitor : TransitionLabelsBaseVisitor<IExpression>
 {
+    private const string @bool = "Bool";
+    private const string @int = "Int";
+
+    private Dictionary<string, ModelInfo>? atlas;
+
+    public IExpression Visit(Dictionary<string, ModelInfo> a, IParseTree pt)
+    {
+        try
+        {
+            this.atlas = a;
+            return this.Visit(pt);
+        }
+        finally
+        {
+            this.atlas = null;
+        }
+    }
+
     public override IExpression VisitLabel(TransitionLabelsParser.LabelContext context)
     {
         return this.Visit(context.orExpr());
@@ -34,25 +53,65 @@ public class TransitionLabelVisitor : TransitionLabelsBaseVisitor<IExpression>
 
     public override IExpression VisitVariable(TransitionLabelsParser.VariableContext context)
     {
-        if (string.IsNullOrWhiteSpace(context.variable_val()?.GetText()))
+        var lhs = context.PATH().GetText()!;
+        var rhs = context.variable_val()?.PATH().GetText();
+
+        if (!this.atlas!.TryGetValue(lhs, out var lhsInfo) || lhsInfo.Type is not ModelPropertyType.Variable)
         {
-            return new Variable(
-                context.PATH().GetText(),
-                "==",
-                "bool",
-                "true");
+            throw new ArgumentException($"Unknown variable '{lhs}'");
         }
 
-        return new Variable(
-            context.PATH().GetText(),
-            context.VARIABLE_OP().GetText(),
-            this.GetDomain(context),
-            context.variable_val().GetText());
+        ModelInfo? rhsInfo = null;
+        if (rhs is not null && (!this.atlas!.TryGetValue(rhs, out rhsInfo) || rhsInfo.Type is not ModelPropertyType.Variable))
+        {
+            throw new ArgumentException($"Unknown variable '{rhs}'");
+        }
+
+        if (rhs is null && string.IsNullOrWhiteSpace(context.variable_val()?.GetText()))
+        {
+            // booleanValue
+            return new Variable(
+                lhsInfo,
+                "==",
+                @bool,
+                "true");
+        }
+        else if (rhs is null)
+        {
+            // variable OP value
+            return new Variable(
+                lhsInfo,
+                context.VARIABLE_OP().GetText(),
+                this.GetDomain(context),
+                context.variable_val().GetText());
+        }
+        else if (rhsInfo is not null)
+        {
+            if (lhsInfo.ValueType != rhsInfo.ValueType)
+            {
+                throw new ArgumentException($"Cannot compare type '{lhsInfo.ValueType}' with '{rhsInfo.ValueType}'.");
+            }
+
+            // variable OP variable
+            return new Variable(
+                lhsInfo,
+                context.VARIABLE_OP().GetText(),
+                lhsInfo.ValueType == "Boolean" ? @bool : @int,
+                rhsInfo);
+        }
+
+        throw new NotSupportedException();
     }
 
     public override IExpression VisitCommand(TransitionLabelsParser.CommandContext context)
     {
-        return new Command(context.PATH().GetText());
+        var commandPath = context.PATH().GetText();
+        if (!this.atlas!.TryGetValue(commandPath, out var info) || info.Type is not ModelPropertyType.Command)
+        {
+            throw new ArgumentException($"Unknown command '{commandPath}'");
+        }
+
+        return new Command(info.MachineIndex, info.Name);
     }
 
     public override IExpression VisitVal(TransitionLabelsParser.ValContext context)
@@ -69,8 +128,6 @@ public class TransitionLabelVisitor : TransitionLabelsBaseVisitor<IExpression>
 
     private string GetDomain(TransitionLabelsParser.VariableContext context)
     {
-        const string @bool = "Bool";
-        const string @int = "Int";
         if (context.VARIABLE_OP().GetText() is "<" or ">") return @int;
         
         var val = context.variable_val();

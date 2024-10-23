@@ -46,6 +46,7 @@ public static class PatternCatalogue
     {
         return scope switch
         {
+            Scope.Global => GetExistenceGlobalPattern(option),
             Scope.Between => GetExistenceBetweenPattern(option),
             _ => throw new NotSupportedException(
                 $"The provided scope '{scope}' is currently not supported for the existence behaviour")
@@ -100,6 +101,21 @@ public static class PatternCatalogue
     #endregion
 
     #region Existence
+    private static IModalFormula GetExistenceGlobalPattern(Option option)
+    {
+        return option switch
+        {
+            // [true*] mu X. <true> true and [not A ] X
+            Option.None =>
+                new Box(new Kleene(Bool.True), new MuFixPoint("X", new Conjunction(new Diamond(Bool.True, Bool.True), new Phi(PhiType.Fix, Event.A, new FixPoint("X"))))),
+            // [(not P )*. P . (not P )*. P ] false
+            Option.Bounded => 
+                new Phi(PhiType.Neg, Event.A, new Phi(PhiType.Pos, Event.A, new Phi(PhiType.Neg, Event.A, new Phi(PhiType.Pos, Event.A, Bool.False)))),
+            _ => throw new NotSupportedException(
+                $"The provided option combination '{option}' is currently not supported for the existence behaviour with between scope")
+        };
+    }
+
     private static IModalFormula GetExistenceBetweenPattern(Option option)
     {
         return option switch

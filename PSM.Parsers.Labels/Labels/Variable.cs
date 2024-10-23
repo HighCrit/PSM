@@ -2,21 +2,21 @@
 
 public struct Variable : IExpression
 {
-    public Variable(string name, string operand, string domain, object value)
+    public Variable(ModelInfo lhs, string operand, string domain, object rhs)
     {
-        this.Name = name;
+        this.LHS = lhs;
         this.Operand = operand;
         this.Domain = domain;
-        this.Value = value;
+        this.RHS = rhs;
     }
     
-    public string Name { get; }
+    public ModelInfo LHS { get; }
 
     public string Operand { get; }
 
     public string Domain { get; }
 
-    public object Value { get; }
+    public object RHS { get; }
 
     public bool Negated { get; set; } = false;
 
@@ -32,6 +32,15 @@ public struct Variable : IExpression
 
     public string ToMCRL2()
     {
-        return $"exists s_1,s_2 : {this.Domain} . <{this.Name}(s_1)> && (s_1 {this.Operand} s_2) && (s_2 == {this.Value})";
+        var lhsName = $"state_M{this.LHS.MachineIndex}'{this.LHS.Name}";
+
+        if (this.RHS is ModelInfo rhsInfo)
+        {
+            var rhsName = $"state_M{rhsInfo.MachineIndex}'{rhsInfo.Name}";
+
+            return $"exists s_1,s_2 : {this.Domain} . <{lhsName}(s_1)> && <{rhsName}(s_2)> && (s_1 {this.Operand} s_2)";
+        }
+
+        return $"exists s_1,s_2 : {this.Domain} . <{lhsName}(s_1)> && (s_1 {this.Operand} {this.RHS})";
     }
 }

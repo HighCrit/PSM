@@ -20,6 +20,6 @@ public class BooleanExp(string value) : IModalFormula
 
     public virtual string ToMCRL2()
     {
-        return this.Value;
+        return $"val({this.Value})";
     }
 }

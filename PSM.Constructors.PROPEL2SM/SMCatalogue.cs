@@ -174,12 +174,12 @@ public static class SMCatalogue
             two.AddTransition(two, $"[NOT ({events[Event.B]})]");
         }
 
-        if (option.HasFlag(Option.Repeatability))
+        if (!option.HasFlag(Option.Finalisation) && option.HasFlag(Option.Repeatability))
         {
             three.AddTransition(two, $"[{events[Event.A]}]");
         }
 
-        if (option.HasFlag(Option.Finalisation) || option.HasFlag(Option.ScopeRepeatability))
+        if (option.HasFlag(Option.Finalisation) || option.HasFlag(Option.Repeatability))
         {
             if (option.HasFlag(Option.PostArity))
             {

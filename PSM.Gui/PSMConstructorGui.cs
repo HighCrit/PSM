@@ -88,26 +88,30 @@ namespace PSM.Gui
         {
             var options = (this.lastScope, this.lastBehaviour).GetOptions();
 
-            var oldOption = this.lastOption;
-            this.lastOption = Option.None;
+            var newOption = Option.None;
             this.optionsList.Items.Clear();
             foreach (var option in options)
             {
                 var state = CheckState.Unchecked;
-                if (option is Option.Immediacy or Option.ScopeRepeatability or Option.PreArity or Option.PostArity)
+                if (option is Option.ScopeRepeatability or Option.PreArity or Option.PostArity)
                 {
-                    this.lastOption |= option;
+                    newOption |= option;
                     state = CheckState.Indeterminate;
                 }
-
-                if (oldOption.HasFlag(option))
+                else if (option is Option.Immediacy)
                 {
-                    this.lastOption |= option;
+                    state = CheckState.Indeterminate;
+                }
+                else if (this.lastOption.HasFlag(option))
+                {
+                    newOption |= option;
                     state = CheckState.Checked;
                 }
 
                 this.optionsList.Items.Add(option, state);
             }
+
+            this.lastOption = newOption;
         }
 
         private void updateLastFocusedTextBox(object sender, EventArgs e)
@@ -146,8 +150,7 @@ namespace PSM.Gui
             viewTabControl.Enabled = true;
             optionsBox.Enabled = true;
 
-            PopulateTreeView(variableOptionsTree, this.psmFactory.Variables, '.');
-            PopulateTreeView(variableOptionsTree, this.psmFactory.Commands, '$');
+            PopulateTreeView(variableOptionsTree, this.psmFactory.Atlas.Keys, '.');
         }
 
         private void mucalculusToolStripMenuItem_Click(object sender, EventArgs e) => this.export(f => f.ToMCRL2());
@@ -203,45 +206,84 @@ namespace PSM.Gui
                 labels.Add(@event, label);
             }
 
-            var sm = SMCatalogue.GetSM(this.lastBehaviour, this.lastScope, this.lastOption, labels);
-            var pngPath = SmConverter.ToPNG(sm);
+            try
+            {
+                var sm = SMCatalogue.GetSM(this.lastBehaviour, this.lastScope, this.lastOption, labels);
+                var pngPath = SmConverter.ToPNG(sm);
 
-            this.SMImageBox.Image = Image.FromFile(pngPath);
+                this.SMImageBox.Image = Image.FromFile(pngPath);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    ex.Message,
+                    "Failed to generate state-machine.",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                return;
+            }
         }
 
         private static void PopulateTreeView(TreeView treeView, IEnumerable<string> paths, char pathSeparator)
         {
             TreeNode lastNode = null;
             string subPathAgg;
-            foreach (string path in paths)
+            foreach (var path in paths)
             {
                 subPathAgg = string.Empty;
-                foreach (string subPath in path.Split(pathSeparator))
+                foreach (var subPath in path.Split(pathSeparator))
                 {
                     subPathAgg += subPath + pathSeparator;
-                    TreeNode[] nodes = treeView.Nodes.Find(subPathAgg, true);
+                    var nodes = treeView.Nodes.Find(subPathAgg, true);
                     if (nodes.Length == 0)
+                    {
                         if (lastNode == null)
+                        {
                             lastNode = treeView.Nodes.Add(subPathAgg, subPath);
+                        }
                         else
+                        {
                             lastNode = lastNode.Nodes.Add(subPathAgg, subPath);
+                        }
+                    }
                     else
+                    {
                         lastNode = nodes[0];
+                    }
                 }
                 lastNode = null; // This is the place code was changed
-
             }
         }
 
         private void variableOptionsTree_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            this.lastTextBox.Text += e.Node!.FullPath.Replace('\\', '.');
+            var path = e.Node!.FullPath.Replace('\\', '.');
+            if (!this.psmFactory!.Atlas.TryGetValue(path, out var info))
+            {
+                return;
+            }
+
+            var addition = info.Type is ModelPropertyType.Command
+                ? $"CmdChk({path})"
+                : path;
+
+            this.lastTextBox.Text += addition;
         }
 
         private void dnlLabel_Click(object sender, EventArgs e)
         {
             var dnl = psmFactory!.GetDNL(this.lastBehaviour, this.lastScope, this.lastOption);
             dnlLabel.Text = dnl;
+        }
+        private void ClearTextbox(object sender, MouseEventArgs e)
+        {
+            var tb = (TextBox)sender;
+
+            if (e.Button == MouseButtons.Middle)
+            {
+                tb.Text = string.Empty;
+                this.lastTextBox = tb;
+            }
         }
     }
 }

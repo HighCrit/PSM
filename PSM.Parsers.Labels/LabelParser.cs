@@ -6,7 +6,7 @@ namespace PSM.Parsers.Labels;
 
 public static class LabelParser
 {
-    public static IExpression? Parse(string? label)
+    public static IExpression? Parse(Dictionary<string, ModelInfo> atlas, string? label)
     {
         if (string.IsNullOrWhiteSpace(label)) return Labels.Boolean.True;
         
@@ -18,6 +18,6 @@ public static class LabelParser
         var labelContext = parser.label();
         var visitor = new TransitionLabelVisitor();
 
-        return visitor.Visit(labelContext);
+        return visitor.Visit(atlas, labelContext);
     }
 }
