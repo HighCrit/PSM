@@ -43,7 +43,17 @@ public static class SMCatalogue
                 $"The provided scope '{scope}' is currently not supported for the existence behaviour")
         };
     }
-    
+
+    private static IStateMachine GetPrecedenceSM(Scope scope, Option option, IDictionary<Event, string> events)
+    {
+        return scope switch
+        {
+            Scope.Between => GetPrecedenceBetweenSM(option, events),
+            _ => throw new NotSupportedException(
+                $"The provided scope '{scope}' is currently not supported for the precedence behaviour")
+        };
+    }
+
     private static IStateMachine GetResponseSM(Scope scope, Option option, IDictionary<Event, string> events)
     {
         return scope switch
@@ -137,7 +147,161 @@ public static class SMCatalogue
         return sm;
     }
     #endregion
-    
+
+    #region Precedence
+    private static IStateMachine GetPrecedenceBetweenSM(Option option, IDictionary<Event, string> events)
+    {
+        var sm = new StateMachine();
+        var initial = new State(StateType.Initial);
+        var one = new State(StateType.Normal, "Accepting", "1");
+        var two = new State(StateType.Normal, !option.HasFlag(Option.Nullity) ? string.Empty : "Accepting", "2");
+        var three = new State(StateType.Normal, "Accepting", "3");
+        var four = new State(StateType.Normal, "Accepting", "4");
+        sm.AddStates(initial, one, two, three, four);
+
+        initial.AddTransition(one, string.Empty);
+
+        // One
+        one.AddTransition(one, $"[NOT ({events[Event.Start]})]");
+        one.AddTransition(two, $"[{events[Event.Start]}]");
+
+        // Two
+        two.AddTransition(two, $"[NOT (({events[Event.A]}) OR ({events[Event.B]}) OR ({events[Event.End]}))]");
+        if (option.HasFlag(Option.Nullity))
+        {
+            two.AddTransition(one, $"[{events[Event.End]}]");
+        }
+        two.AddTransition(three, $"[{events[Event.A]}]");
+
+        // Three
+        if (!option.HasFlag(Option.Immediacy))
+        {
+            three.AddTransition(one, $"[{events[Event.End]}]");
+        }
+        if (!option.HasFlag(Option.FirstStart) && !option.HasFlag(Option.Immediacy)) // Last start
+        {
+            three.AddTransition(two, $"[{events[Event.Start]}]");
+        }
+        three.AddTransition(four, $"[{events[Event.B]}]");
+
+        string? threeSelfLoop = null;
+        if (option.HasFlag(Option.Immediacy) && option.HasFlag(Option.PreArity))
+        {
+            threeSelfLoop = $"[{events[Event.A]}]";
+        }
+        else if (option.HasFlag(Option.Immediacy) && !option.HasFlag(Option.FirstStart))
+        {
+            threeSelfLoop = $"[NOT (({events[Event.A]}) OR ({events[Event.B]}) OR ({events[Event.End]}))]";
+        }
+        else if (option.HasFlag(Option.Immediacy) && option.HasFlag(Option.FirstStart))
+        {
+            threeSelfLoop = $"[NOT (({events[Event.A]}) OR ({events[Event.B]}) OR ({events[Event.Start]}) OR ({events[Event.End]}))]";
+        } else if (option.HasFlag(Option.FirstStart))
+        {
+            threeSelfLoop = $"[NOT (({events[Event.B]}) OR ({events[Event.Start]}) OR ({events[Event.End]}))]";
+        }
+        else
+        {
+            threeSelfLoop = $"[NOT (({events[Event.B]}) OR ({events[Event.End]}))]";
+        }
+        three.AddTransition(three, threeSelfLoop!);
+
+        // Four
+        four.AddTransition(one, $"[{events[Event.End]}]");
+        if (!option.HasFlag(Option.FirstStart) || option.HasFlag(Option.OptionalEnd))
+        {
+            four.AddTransition(two, $"[{events[Event.Start]}]");
+        }
+        if (option.HasFlag(Option.Repeatability) && !option.HasFlag(Option.Finalisation))
+        {
+            four.AddTransition(three, $"[{events[Event.A]}]");
+        }
+
+        string? fourSelfLoop = null;
+        if (option.HasFlag(Option.Repeatability) && !option.HasFlag(Option.Finalisation))
+        {
+            if (option.HasFlag(Option.PostArity))
+            {
+                if (option.HasFlag(Option.OptionalEnd))
+                {
+                    fourSelfLoop = $"[NOT (({events[Event.A]}) OR ({events[Event.Start]}) OR ({events[Event.End]}))]";
+                } 
+                else
+                {
+                    fourSelfLoop = $"[NOT (({events[Event.A]}) OR ({events[Event.End]}))]";
+                }
+            } 
+            else
+            {
+                if (option.HasFlag(Option.OptionalEnd))
+                {
+                    fourSelfLoop = $"[NOT (({events[Event.A]}) OR ({events[Event.B]}) OR ({events[Event.Start]}) OR ({events[Event.End]}))]";
+                }
+                else
+                {
+                    fourSelfLoop = $"[NOT (({events[Event.A]}) OR ({events[Event.B]}) OR ({events[Event.End]}))]";
+                }
+            }
+        }
+        else
+        {
+            if (option.HasFlag(Option.Finalisation))
+            {
+                if (option.HasFlag(Option.PostArity))
+                {
+                    if (option.HasFlag(Option.OptionalEnd))
+                    {
+                        fourSelfLoop = $"[NOT (({events[Event.A]}) OR ({events[Event.Start]}) OR ({events[Event.End]}))]";
+                    } 
+                    else
+                    {
+                        fourSelfLoop = $"[NOT (({events[Event.A]}) OR ({events[Event.End]}))]";
+                    }
+                }
+                else
+                {
+                    if (option.HasFlag(Option.OptionalEnd))
+                    {
+                        fourSelfLoop = $"[NOT (({events[Event.A]}) OR ({events[Event.B]}) OR ({events[Event.Start]}) OR ({events[Event.End]}))]";
+                    }
+                    else
+                    {
+                        fourSelfLoop = $"[NOT (({events[Event.A]}) OR ({events[Event.B]}) OR ({events[Event.End]}))]";
+                    }
+                }
+            }
+            else
+            {
+                if (option.HasFlag(Option.PostArity))
+                {
+                    if (option.HasFlag(Option.OptionalEnd))
+                    {
+                        fourSelfLoop = $"[NOT ({events[Event.Start]}) OR ({events[Event.End]})]";
+                    }
+                    else
+                    {
+                        fourSelfLoop = $"[NOT ({events[Event.End]})]";
+                    }
+                }
+                else
+                {
+                    if (option.HasFlag(Option.OptionalEnd))
+                    {
+                        fourSelfLoop = $"[NOT (({events[Event.B]}) OR ({events[Event.Start]}) OR ({events[Event.End]}))]";
+                    }
+                    else
+                    {
+                        fourSelfLoop = $"[NOT (({events[Event.B]}) OR ({events[Event.End]}))]";
+                    }
+                }
+            }
+        }
+        four.AddTransition(four, fourSelfLoop!);
+
+        return sm;
+    }
+    #endregion
+
     #region Response
     private static IStateMachine GetResponseGlobalSM(Option option, IDictionary<Event, string> events)
     {
@@ -207,7 +371,158 @@ public static class SMCatalogue
     
     private static IStateMachine GetResponseBetweenSM(Option option, IDictionary<Event, string> events)
     {
-        throw new NotSupportedException();
+        var sm = new StateMachine();
+        var initial = new State(StateType.Initial);
+        var one = new State(StateType.Normal, "Accepting", "1");
+        var two = new State(StateType.Normal, !option.HasFlag(Option.Nullity) ? string.Empty : "Accepting", "2");
+        var three = new State(StateType.Normal, option.HasFlag(Option.OptionalEnd) ? string.Empty : "Accepting", "3");
+        var four = new State(StateType.Normal, "Accepting", "4");
+        sm.AddStates(initial, one, two, three, four);
+
+        initial.AddTransition(one, string.Empty);
+
+        // One
+        one.AddTransition(one, $"[NOT ({events[Event.Start]})]");
+        one.AddTransition(two, $"[{events[Event.Start]}]");
+
+        // Two
+        if (option.HasFlag(Option.Precedency))
+        {
+            two.AddTransition(two, $"[NOT (({events[Event.A]}) OR ({events[Event.End]}))]");
+        }
+        else
+        {
+            two.AddTransition(two, $"[NOT (({events[Event.A]}) OR ({events[Event.B]}) OR ({events[Event.End]}))]");
+        }
+        if (option.HasFlag(Option.Nullity))
+        {
+            two.AddTransition(one, $"[{events[Event.End]}]");
+        }
+        two.AddTransition(three, $"[{events[Event.A]}]");
+
+        // Three
+        if (!option.HasFlag(Option.FirstStart) && !option.HasFlag(Option.Immediacy)) // Last start
+        {
+            three.AddTransition(two, $"[{events[Event.Start]}]");
+        }
+        three.AddTransition(four, $"[{events[Event.B]}]");
+
+        string? threeSelfLoop = null;
+        if (option.HasFlag(Option.Immediacy) && option.HasFlag(Option.PreArity))
+        {
+            threeSelfLoop = $"[{events[Event.A]}]";
+        }
+        else if (option.HasFlag(Option.Immediacy) && !option.HasFlag(Option.FirstStart))
+        {
+            threeSelfLoop = $"[NOT (({events[Event.A]}) OR ({events[Event.B]}) OR ({events[Event.End]}))]";
+        }
+        else if (option.HasFlag(Option.Immediacy) && option.HasFlag(Option.FirstStart))
+        {
+            threeSelfLoop = $"[NOT (({events[Event.A]}) OR ({events[Event.B]}) OR ({events[Event.Start]}) OR ({events[Event.End]}))]";
+        }
+        else if (option.HasFlag(Option.FirstStart))
+        {
+            threeSelfLoop = $"[NOT (({events[Event.B]}) OR ({events[Event.Start]}) OR ({events[Event.End]}))]";
+        }
+        else
+        {
+            threeSelfLoop = $"[NOT (({events[Event.B]}) OR ({events[Event.End]}))]";
+        }
+        three.AddTransition(three, threeSelfLoop!);
+
+        // Four
+        four.AddTransition(one, $"[{events[Event.End]}]");
+        if (!option.HasFlag(Option.FirstStart) || option.HasFlag(Option.OptionalEnd))
+        {
+            four.AddTransition(two, $"[{events[Event.Start]}]");
+        }
+        if (option.HasFlag(Option.Repeatability) && !option.HasFlag(Option.Finalisation))
+        {
+            four.AddTransition(three, $"[{events[Event.A]}]");
+        }
+
+        string? fourSelfLoop = null;
+        if (option.HasFlag(Option.Repeatability) && !option.HasFlag(Option.Finalisation))
+        {
+            if (option.HasFlag(Option.PostArity))
+            {
+                if (option.HasFlag(Option.OptionalEnd))
+                {
+                    fourSelfLoop = $"[NOT (({events[Event.A]}) OR ({events[Event.Start]}) OR ({events[Event.End]}))]";
+                }
+                else
+                {
+                    fourSelfLoop = $"[NOT (({events[Event.A]}) OR ({events[Event.End]}))]";
+                }
+            }
+            else
+            {
+                if (option.HasFlag(Option.OptionalEnd))
+                {
+                    fourSelfLoop = $"[NOT (({events[Event.A]}) OR ({events[Event.B]}) OR ({events[Event.Start]}) OR ({events[Event.End]}))]";
+                }
+                else
+                {
+                    fourSelfLoop = $"[NOT (({events[Event.A]}) OR ({events[Event.B]}) OR ({events[Event.End]}))]";
+                }
+            }
+        }
+        else
+        {
+            if (option.HasFlag(Option.Finalisation))
+            {
+                if (option.HasFlag(Option.PostArity))
+                {
+                    if (option.HasFlag(Option.OptionalEnd))
+                    {
+                        fourSelfLoop = $"[NOT (({events[Event.A]}) OR ({events[Event.Start]}) OR ({events[Event.End]}))]";
+                    }
+                    else
+                    {
+                        fourSelfLoop = $"[NOT (({events[Event.A]}) OR ({events[Event.End]}))]";
+                    }
+                }
+                else
+                {
+                    if (option.HasFlag(Option.OptionalEnd))
+                    {
+                        fourSelfLoop = $"[NOT (({events[Event.A]}) OR ({events[Event.B]}) OR ({events[Event.Start]}) OR ({events[Event.End]}))]";
+                    }
+                    else
+                    {
+                        fourSelfLoop = $"[NOT (({events[Event.A]}) OR ({events[Event.B]}) OR ({events[Event.End]}))]";
+                    }
+                }
+            }
+            else
+            {
+                if (option.HasFlag(Option.PostArity))
+                {
+                    if (option.HasFlag(Option.OptionalEnd))
+                    {
+                        fourSelfLoop = $"[NOT ({events[Event.Start]}) OR ({events[Event.End]})]";
+                    }
+                    else
+                    {
+                        fourSelfLoop = $"[NOT ({events[Event.End]})]";
+                    }
+                }
+                else
+                {
+                    if (option.HasFlag(Option.OptionalEnd))
+                    {
+                        fourSelfLoop = $"[NOT (({events[Event.B]}) OR ({events[Event.Start]}) OR ({events[Event.End]}))]";
+                    }
+                    else
+                    {
+                        fourSelfLoop = $"[NOT (({events[Event.B]}) OR ({events[Event.End]}))]";
+                    }
+                }
+            }
+        }
+        four.AddTransition(four, fourSelfLoop!);
+
+        return sm;
     }
     #endregion
 }

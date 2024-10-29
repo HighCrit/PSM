@@ -4,17 +4,13 @@
 // </copyright>
 
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
 using PSM.Common;
-using PSM.Common.MuCalc.ActionFormula.Operators;
 using PSM.Common.MuCalc.Common;
 using PSM.Common.MuCalc.Dissections;
 using PSM.Common.MuCalc.ModalFormula;
 using PSM.Common.MuCalc.ModalFormula.Operators;
-using PSM.Common.MuCalc.RegularFormula;
 using PSM.Common.MuCalc.RegularFormula.Operators;
 using PSM.Common.PROPEL;
-using Action = PSM.Common.MuCalc.Actions.Action;
 
 namespace PSM.Constructors.PROPEL2MuCalc;
 
@@ -159,6 +155,19 @@ public static class PatternCatalogue
                             new Phi(PhiType.Pos, Event.A,
                                 new Phi(PhiType.Neg, Event.B | Event.End,
                                     new Phi(PhiType.Pos, Event.End, Bool.False)))))),
+            // [true*. START . (not END )*. A ] mu X. <true> true and [ END ] false and [not B ] X
+            Option.Nullity | Option.Precedency | Option.PreArity | Option.PostArity | Option.Repeatability |
+                Option.ScopeRepeatability | Option.FirstStart | Option.OptionalEnd =>
+                new Box(new Kleene(Bool.True),
+                    new Phi(PhiType.Pos, Event.Start,
+                        new Phi(PhiType.Neg, Event.End,
+                            new Phi(PhiType.Pos, Event.A, 
+                                new MuFixPoint("X", 
+                                    new Conjunction(
+                                        new Diamond(Bool.True, Bool.True),
+                                        new Conjunction(
+                                            new Phi(PhiType.Pos, Event.End, Bool.False),
+                                            new Phi(PhiType.Fix, Event.B, new FixPoint("X"))))))))),
             _ => throw new NotSupportedException(
                 $"The provided option combination '{option}' is currently not supported for the response behaviour with between scope")
         };
